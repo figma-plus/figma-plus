@@ -1,0 +1,69 @@
+.figma-icon,
+.figma-icon-button {
+	font-family: 'FigmaIcons';
+	color: #444;
+	fill: #444;
+	-webkit-font-smoothing: antialiased;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	&.disabled {
+		fill: #d4d4d4;
+		color: #d4d4d4;
+	}
+	&.close::after {
+		content: '\103';
+		font-size: 10px;
+	}
+	&.add::after {
+		content: '\157';
+		font-size: 16px;
+	}
+	&.search::after {
+		content: '\14d';
+		font-size: 12px;
+	}
+	&.more::after {
+		content: '\19f';
+		font-size: 24px;
+	}
+	&.align-left::after {
+		content: '\1c5';
+		font-size: 24px;
+	}
+	&.align-center::after {
+		content: '\1c7';
+		font-size: 24px;
+	}
+	&.align-right::after {
+		content: '\1c9';
+		font-size: 24px;
+	}
+	&.align-justified::after {
+		content: '\1cb';
+		font-size: 24px;
+	}
+	&.chevron-down::after {
+		content: '\156';
+		font-size: 24px;
+	}
+	&.chevron-up::after {
+		content: '\156';
+		font-size: 24px;
+		transform: rotate(180deg);
+	}
+}
+
+.figma-icon-button {
+	height: 24px;
+	width: 24px;
+	border-radius: 3px;
+	&:hover {
+		background: #efefef;
+		fill: #050505;
+		color: #050505;
+	}
+	&.disabled {
+		background: transparent;
+	}
+}

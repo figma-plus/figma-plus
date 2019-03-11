@@ -1,0 +1,345 @@
+@import './FigmaIcons';
+
+* {
+	-webkit-font-smoothing: antialiased;
+	user-select: none;
+	cursor: default;
+}
+
+body {
+	font: normal normal 400 11px/15px Roboto, sans-serif;
+	color: #444;
+	outline: none;
+}
+
+.modal-content {
+	position: relative;
+	padding: 12px;
+	&.no-padding {
+		padding: 0px;
+	}
+
+	h1 {
+		font-size: 14px;
+		font-weight: 400;
+		line-height: 20px;
+	}
+
+	h2 {
+		text-transform: uppercase;
+		letter-spacing: 1px;
+		font-weight: 400;
+		font-size: 11px;
+		color: #444;
+		margin-bottom: 12px;
+	}
+
+	h3 {
+		color: #aaa;
+		font-weight: inherit;
+		font-size: inherit;
+		margin-bottom: 6px;
+	}
+
+	button {
+		background-color: transparent;
+		display: block;
+		text-align: center;
+		height: 30px;
+		line-height: 28px;
+		max-width: 180px;
+		padding: 0 12px;
+		color: #444;
+		font-weight: 400;
+		background-color: transparent;
+		box-sizing: border-box;
+		border: 1px solid #d4d4d4;
+		border-radius: 3px;
+		outline: none;
+		&:active {
+			background-color: rgba(0, 0, 0, 0.1);
+		}
+		&:focus {
+			border: 2px solid #30c2ff;
+			line-height: 26px;
+			padding: 0 11px;
+		}
+		&:disabled {
+			color: #d4d4d4;
+			background-color: transparent;
+			border: 1px solid #d4d4d4;
+		}
+		&.primary {
+			color: #fff;
+			background-color: #30c2ff;
+			border-color: #30c2ff;
+			&:active {
+				background-color: #30afe6;
+				border-color: #30afe6;
+			}
+			&:focus {
+				border: 2px solid rgba(0, 0, 0, 0.2);
+			}
+			&:disabled {
+				color: #d4d4d4;
+				background-color: transparent;
+				border: 1px solid #d4d4d4;
+			}
+		}
+	}
+
+	input,
+	textarea {
+		font-family: 'Roboto', sans-serif;
+		color: #444;
+		padding: 0 2px 0 4px;
+		box-sizing: border-box;
+		border: 1px solid #d4d4d4;
+		border-radius: 3px;
+		cursor: default;
+		&[type='text'] {
+			height: 24px;
+		}
+		&::placeholder {
+			color: #aaa;
+		}
+		&:focus {
+			border-color: #30c2ff;
+			box-shadow: inset 0 0 0 1px #30c2ff;
+			outline: none;
+		}
+		&.no-border {
+			border: none;
+			&:focus {
+				border: none;
+				box-shadow: none;
+			}
+		}
+	}
+
+	input[type='checkbox'] {
+		width: 14px;
+		height: 14px;
+		margin-right: 6px;
+		&:after {
+			content: '';
+			display: -webkit-inline-box;
+			display: -webkit-inline-flex;
+			display: -ms-inline-flexbox;
+			display: inline-flex;
+			width: 14px;
+			height: 14px;
+			border: 1px solid #d4d4d4;
+			border-radius: 3px;
+			box-sizing: border-box;
+			background-color: #fff;
+		}
+		&:checked:after {
+			background-image: url(https://www.figma.com/images/checkbox_check_gray.svg);
+			background-position: 50%;
+			background-repeat: no-repeat;
+		}
+		&:focus {
+			border-color: none;
+			box-shadow: none;
+		}
+	}
+
+	.checkboxGroup {
+		display: flex;
+		align-items: center;
+		height: 24px;
+	}
+
+	a {
+		cursor: pointer;
+		color: #30c2ff;
+		display: flex;
+		align-items: center;
+		.figma-icon,
+		span {
+			color: #30c2ff;
+			display: inline-block;
+		}
+		span {
+			margin-left: 8px;
+			padding-bottom: 2px;
+		}
+	}
+}
+
+.top-bar-button {
+	width: 42px;
+	height: 42px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	position: relative;
+	&.has-badge::after {
+		content: '';
+		width: 12px;
+		height: 12px;
+		border-radius: 10px;
+		background: #f24822;
+		position: absolute;
+		top: 8px;
+		right: 6px;
+	}
+	&.active,
+	&.active:hover {
+		background: #30c2ff;
+	}
+	&:hover {
+		background-color: #050505;
+	}
+}
+
+.plugin-dropdown-option {
+	font-size: 11px;
+	color: #fff;
+	padding: 0 6px;
+	align-items: center;
+	flex: 0 0 24px;
+	line-height: 24px;
+	text-align: left;
+	white-space: nowrap;
+	display: flex;
+	&:hover {
+		background: #30c2ff;
+	}
+	.plugin-dropdown-option-text {
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		padding-left: 6px;
+		padding-right: 6px;
+		max-width: 200px;
+	}
+	.plugin-dropdown-option-shortcut {
+		margin-left: auto;
+		padding-left: 24px;
+		margin-right: 12px;
+	}
+	.plugin-dropdown-option-chevron {
+		font-family: 'FigmaIcons';
+		margin-left: auto;
+		padding-left: 24px;
+		margin-right: 12px;
+		&::after {
+			content: '\14c';
+			font-size: 10px;
+		}
+	}
+}
+
+.plugin-dropdown-submenu {
+	position: fixed;
+	min-width: 200px !important;
+	z-index: 14;
+	font-size: 14px;
+	display: flex;
+	cursor: default;
+	font: normal normal 400 11px/15px Roboto, sans-serif;
+	-webkit-box-orient: vertical;
+	-webkit-box-direction: normal;
+	flex-direction: column;
+	background: #050505;
+	min-width: 120px;
+	padding: 6px 0;
+	z-index: 14;
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+	border-radius: 3px;
+}
+
+.v--modal-overlay {
+	height: 0 !important;
+	width: 0 !important;
+	background-color: rgba(0, 0, 0, 0.3) !important;
+	z-index: 11 !important;
+}
+
+.overlay-fade-enter-active,
+.overlay-fade-leave-active {
+	transition: all 0s !important;
+}
+
+.v--modal.v--modal-box {
+	-webkit-font-smoothing: antialiased;
+	user-select: none;
+	cursor: default;
+	box-shadow: 0 0 0.5px 0.5px rgba(0, 0, 0, 0.2), 0 2px 14px rgba(0, 0, 0, 0.15);
+	overflow: hidden;
+	background: #f8f8f8;
+}
+
+.modal-header {
+	font: normal normal 400 12px/18px Roboto, sans-serif;
+	height: 36px;
+	background: #2c2c2c;
+	color: #fff;
+	display: flex;
+	-webkit-box-pack: justify;
+	-webkit-justify-content: space-between;
+	justify-content: space-between;
+	-webkit-box-align: center;
+	-webkit-align-items: center;
+	align-items: center;
+	padding-left: 12px;
+	border-top-left-radius: 3px;
+	border-top-right-radius: 3px;
+	.modal-close-button {
+		font-family: 'FigmaIcons';
+		color: #fff;
+		height: 36px;
+		width: 36px;
+		opacity: 0.3;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		&::after {
+			content: '\103';
+			font-size: 10px;
+		}
+		&:hover {
+			opacity: 1;
+		}
+	}
+	&.header-large {
+		height: 48px;
+		line-height: 48px;
+		.modal-close-button {
+			height: 48px;
+			width: 48px;
+		}
+	}
+}
+
+.modal-tabs {
+	display: flex;
+}
+
+.modal-tab {
+	flex-grow: 1;
+	flex-basis: 0;
+	box-sizing: border-box;
+	border-bottom: 1px solid #d4d4d4;
+	text-align: center;
+	text-transform: uppercase;
+	color: #aaa;
+	line-height: 30px;
+	letter-spacing: 1px;
+	&.leftOfActive {
+		border-bottom-right-radius: 3px;
+		border-right: 1px solid #d4d4d4;
+		margin-right: -1px;
+	}
+	&.active {
+		border-bottom: none;
+		color: #444;
+	}
+	&.active + li {
+		border-bottom-left-radius: 3px;
+		border-left: 1px solid #d4d4d4;
+		margin-left: -1px;
+	}
+}

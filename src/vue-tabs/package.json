@@ -1,0 +1,66 @@
+{
+  "name": "vue-nav-tabs",
+  "version": "0.5.7",
+  "description": "A vue based tab component",
+  "repository": {
+    "url": "cristijora/vue-tabs",
+    "type": "git"
+  },
+  "main": "dist/vue-tabs.common.js",
+  "unpkg": "dist/vue-tabs",
+  "poi": {
+    "entry": "dev/main.js",
+    "dist": "dev/dist",
+    "homepage": "/vue-tabs/"
+  },
+  "files": [
+    "dist",
+    "themes"
+  ],
+  "scripts": {
+    "test": "echo 'no tests!' && npm run lint",
+    "prepublish": "npm run build",
+    "lint": "xo",
+    "build:css": "node-sass themes/ -o themes/ && node-sass themes/vue-tabs.scss dist/vue-tabs.min.css --output-style compressed",
+    "build": "bili --filename vue-tabs --format cjs --format umd --compress --banner --js babel && npm run build:css",
+    "build:example": "poi build",
+    "dev": "poi --port 5000",
+    "deploy": "npm run build:example && gh-pages -d example/dist"
+  },
+  "author": "cristij <joracristi@gmail.com>",
+  "license": "MIT",
+  "dependencies": {},
+  "devDependencies": {
+    "babel-preset-stage-2": "^6.24.1",
+    "babel-preset-vue-app": "^1.3.2",
+    "bili": "^0.18.2",
+    "bootstrap": "^3.3.7",
+    "eslint-config-rem": "^3.0.0",
+    "gh-pages": "^1.0.0",
+    "node-sass": "^4.6.0",
+    "poi": "^9.1.0",
+    "rollup-plugin-babel": "^2.7.1",
+    "sass-loader": "^6.0.6",
+    "vue": "^2.5.3",
+    "vue-github-badge": "^1.0.0",
+    "vue-router": "^3.0.1",
+    "vue-template-compiler": "^2.5.3",
+    "xo": "^0.18.0"
+  },
+  "xo": {
+    "extends": "rem/prettier",
+    "ignores": [
+      "dev/**"
+    ]
+  },
+  "babel": {
+    "presets": [
+      [
+        "vue-app",
+        {
+          "useBuiltIns": true
+        }
+      ]
+    ]
+  }
+}
