@@ -1,21 +1,20 @@
 <template lang="pug">
-	.plugin-dropdown-option.padded(ref='menuItem' @click.self="e => e.stopPropagation()" @mouseenter='showSubmenu')
+	#selectionPluginsMenuItem.plugin-dropdown-option(ref='menuItem' @click.self="e => e.stopPropagation()" @mouseenter='showSubmenu')
 		.plugin-dropdown-option-text Figma Plus
 		.plugin-dropdown-option-chevron
 		.plugin-dropdown-submenu(ref='submenu' v-show='menuShown')
-			#pluginOptions
-			.plugin-dropdown-option(@click='openManager')
+			#selectionPluginOptions
+			.plugin-dropdown-option(v-if='!hasPlugins' @click='openPluginManager')
 				.plugin-dropdown-option-text Get Plugins
 				.plugin-dropdown-option-shortcut {{ shortcut }}
-			a.plugin-dropdown-option(target="_blank" href='https://github.com/figma-plus/figma-plus/issues/new' )
-				.plugin-dropdown-option-text Report Issues
 </template>
 
 <script>
 export default {
   data: () => ({
-    shortcut: navigator.platform.includes("Win") ? "Ctrl+Shift+P" : "⇧⌘P",
-    menuShown: false
+    menuShown: false,
+    hasPlugins: false,
+    shortcut: navigator.platform.includes("Win") ? "Ctrl+Shift+P" : "⇧⌘P"
   }),
   mounted() {
     [
@@ -27,10 +26,9 @@ export default {
     );
   },
   methods: {
-    openManager() {
-      window.figmaPlus.togglePluginManager();
-    },
     showSubmenu() {
+      this.hasPlugins =
+        document.getElementById("selectionPluginOptions").children.length > 0;
       const activeNode = document.querySelector(
         'div[class*="multilevel_dropdown__REFRESH--optionActive"]'
       );
@@ -51,17 +49,19 @@ export default {
 
       const menuItem = this.$refs.menuItem;
       const submenu = this.$refs.submenu;
-      this.menuShown = true;
+      const menuItemBounds = menuItem.getBoundingClientRect();
+      const submenuBounds = submenu.getBoundingClientRect();
       submenu.style.bottom = "";
-      submenu.style.top = `${menuItem.getBoundingClientRect().top - 8}px`;
-      if (window.innerHeight - submenu.getBoundingClientRect().bottom < 0) {
+      submenu.style.top = `${menuItemBounds.top - 6}px`;
+      submenu.style.left = `${menuItemBounds.right}px`;
+      this.menuShown = true;
+      if (window.innerHeight - submenuBounds.bottom < 0) {
         submenu.style.top = "";
-        submenu.style.bottom = "8px";
+        submenu.style.bottom = "6px";
       }
-      if (window.innerWidth - menuItem.getBoundingClientRect().right > 200)
-        submenu.style.left = `${menuItem.getBoundingClientRect().right}px`;
-      else
-        submenu.style.left = `${menuItem.getBoundingClientRect().left - 200}px`;
+    },
+    openPluginManager() {
+      figmaPlus.togglePluginManager();
     }
   }
 };

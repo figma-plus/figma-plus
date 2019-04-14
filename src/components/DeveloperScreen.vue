@@ -1,17 +1,17 @@
 <template lang="pug">
 	.developer-screen(@click='editing = ""')
 		.header
-			h1 Code tester
-			button(@click='openCodeTester') Open
+			h1 Script Runner
+			button(@click='openScriptRunner') Open
 		.header.no-divider
-			h1 Development server
+			h1 Development Server
 			button.primary(v-show='!connected' @click.stop='connect') Connect
 			button(v-show='connected' @click.stop='disconnect') Disconnect
 		.dev-server-content
 			.section
 				h2 Port
 				.description Set up a local http server at where your plugin files are located, then enter the port number of your server below.
-				input.port(type='text' v-model='port' @change='if (this.connected) showToast("Server settings updated.")')
+				input.port(type='text' v-model='port' @change='changePort')
 			.section
 				h2 Javascript files
 				a
@@ -36,16 +36,10 @@
 						.path(v-if='editing !== "css" + index' @click.stop='editing = "css" + index') {{path}}
 						input.path-edit(type='text' spellcheck='false' placeholder="File path, e.g. css/app.css" ref='cssEdit' v-if='editing === "css" + index' @keyup.enter='editing = ""' @blur='changePath($event, "css", index)' @click.stop :value='path' @change='changePath($event, "css", index)')
 					a(@click='cssFiles.splice(index, 1)') Remove
-			.section.no-margin-bottom
-				h2 Hash
-				.description Copy this to the Master List entry when you publish and update your plugin.
-				input.hash(type='text' v-model='hash' spellcheck='false' onClick='this.select()' placeholder='Connect to your development server to generate hash')
 </template>
 
 <script>
-import shajs from "sha.js";
-import axios from "axios";
-import CodeTester from "./CodeTester.vue";
+import ScriptRunner from "./ScriptRunner.vue";
 
 export default {
   data: () => ({
@@ -53,25 +47,27 @@ export default {
     port: "8080",
     jsFiles: [],
     cssFiles: [],
-    hash: "",
     editing: ""
   }),
   mounted() {
-    if (JSON.parse(localStorage.getItem("localServer")) !== null) {
-      const localServer = JSON.parse(localStorage.getItem("localServer"));
+    if (JSON.parse(localStorage.getItem("figmaPlus-localServer")) !== null) {
+      const localServer = JSON.parse(
+        localStorage.getItem("figmaPlus-localServer")
+      );
       this.connected = localServer.connected;
       this.port = localServer.port;
       this.jsFiles = localServer.jsFiles;
       this.cssFiles = localServer.cssFiles;
-      this.hash = localServer.hash;
     } else {
       const localServer = {};
       localServer.connected = this.connected;
       localServer.port = this.port;
       localServer.jsFiles = this.jsFiles;
       localServer.cssFiles = this.cssFiles;
-      localServer.hash = "";
-      localStorage.setItem("localServer", JSON.stringify(localServer));
+      localStorage.setItem(
+        "figmaPlus-localServer",
+        JSON.stringify(localServer)
+      );
     }
   },
   watch: {
@@ -102,14 +98,14 @@ export default {
     }
   },
   methods: {
-    openCodeTester() {
-      this.$emit("hide");
+    openScriptRunner() {
+      figmaPlus.togglePluginManager();
       figmaPlus.showUI(
-        "Plugin Code Tester",
+        "Run Script",
         element => {
           new figmaPlus.Vue({
             el: element,
-            render: h => h(CodeTester)
+            render: h => h(ScriptRunner)
           });
         },
         600
@@ -121,7 +117,10 @@ export default {
       localServer.port = this.port;
       localServer.jsFiles = this.jsFiles;
       localServer.cssFiles = this.cssFiles;
-      localStorage.setItem("localServer", JSON.stringify(localServer));
+      localStorage.setItem(
+        "figmaPlus-localServer",
+        JSON.stringify(localServer)
+      );
     },
     showToast(message) {
       figmaPlus.showToast(
@@ -152,6 +151,9 @@ export default {
           : this.$refs.cssEdit[0].focus();
       }, 20);
       if (this.connected) this.showToast("Server settings updated.");
+    },
+    changePort() {
+      if (this.connected) showToast("Server settings updated.");
     },
     changePath(event, type, index) {
       let val = event.target.value;
@@ -208,10 +210,6 @@ export default {
   }
   .port {
     width: 60px;
-    margin-top: 12px;
-  }
-  .hash {
-    width: 100%;
     margin-top: 12px;
   }
 }

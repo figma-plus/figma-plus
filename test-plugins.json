@@ -1,0 +1,80 @@
+[
+	{
+		"id": "find-and-replace",
+		"github": "https://github.com/jackiecorn/figma-find-and-replace/",
+		"approvedVersion": "1.0.0",
+		"approvedCommit": "3c77aa8f6916082c00f8cb6a82d1d0de8d62b3f2"
+	},
+	{
+		"id": "power-platform-theme-switcher",
+		"github": "https://github.com/jackiecorn/power-platform-theme-switcher/",
+		"approvedVersion": "1.0.0",
+		"approvedCommit": "ced93c24f275b448a0be36b551bf68dc7ecdc286"
+	},
+	{
+		"id": "power-platform-library-enabler",
+		"github": "https://github.com/jackiecorn/power-platform-library-enabler/",
+		"approvedVersion": "1.0.0",
+		"approvedCommit": "1df9e1127681f3bf20213ebdfc7d342c6ef1639b"
+	},
+	{
+		"id": "figma-advanced-rename-plugin",
+		"github": "https://github.com/cdes/figma-advanced-rename-plugin/",
+		"approvedVersion": "2.0.2",
+		"approvedCommit": "e3e33ecd0c8aeee89e4b660ba3cb8468a30e1dae"
+	},
+	{
+		"id": "figma-content-generator-plugin",
+		"github": "https://github.com/cdes/figma-content-generator-plugin/",
+		"approvedVersion": "0.50.5",
+		"approvedCommit": "6f8aa394c641a6839666e321f132f99d2320f32f"
+	},
+	{
+		"id": "figma-arabic-support-plugin",
+		"github": "https://github.com/cdes/figma-arabic-support-plugin/",
+		"approvedVersion": "0.0.5",
+		"approvedCommit": "b60823add611e91441c44eb3eec24a526d995fef"
+	},
+	{
+		"id": "figma-automations-plugin",
+		"github": "https://github.com/cdes/figma-automations-plugin/",
+		"approvedVersion": "0.0.2",
+		"approvedCommit": "72dcef1358bc1a45b27f14934a390af4a2926a83"
+	},
+	{
+		"id": "files-list-view",
+		"github": "https://github.com/jackiecorn/figma-files-list-view/",
+		"approvedVersion": "1.0.1",
+		"approvedCommit": "8ac156861d81afdac19fb1f07f868df56b6e27c0"
+	},
+	{
+		"id": "paste-and-replace",
+		"github": "https://github.com/jackiecorn/figma-paste-and-replace/",
+		"approvedVersion": "1.0.0",
+		"approvedCommit": "f3c2d012f091398f309c27a3269463543370e6ce"
+	},
+	{
+		"id": "replace-with-component",
+		"github": "https://github.com/jackiecorn/figma-replace-with-component/",
+		"approvedVersion": "1.0.1",
+		"approvedCommit": "6981abe55998422857111b537f0c50a74064d996"
+	},
+	{
+		"id": "paste-to-all",
+		"github": "https://github.com/jackiecorn/figma-paste-to-all/",
+		"approvedVersion": "1.0.0",
+		"approvedCommit": "407b52b5697d465b8845cda0c6e5a07e7663ede5"
+	},
+	{
+		"id": "figma-material-design-icons-plugin",
+		"github": "https://github.com/cdes/figma-material-design-icons-plugin/",
+		"approvedVersion": "0.0.3",
+		"approvedCommit": "607df7cb69ddf3d6c0d98515f9e31c1d0b09f2db"
+	},
+	{
+		"id": "figma-dark-ui-plugin",
+		"github": "https://github.com/PaperTiger/figma-dark-ui/",
+		"approvedVersion": "0.0.3",
+		"approvedCommit": "7caff7cf7bcd0093739d26741aa1a17a7e5e6bce"
+	}
+]

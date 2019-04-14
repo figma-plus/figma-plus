@@ -1,3 +1,5 @@
+@import './FigmaIconsFont';
+
 .figma-icon,
 .figma-icon-button {
 	font-family: 'FigmaIcons';
@@ -13,44 +15,67 @@
 	}
 	&.close::after {
 		content: '\103';
-		font-size: 10px;
+		font-size: 16px;
 	}
 	&.add::after {
-		content: '\157';
+		content: '\17b';
 		font-size: 16px;
 	}
 	&.search::after {
-		content: '\14d';
-		font-size: 12px;
+		content: '\170';
+		font-size: 18px;
+		height: 8px;
 	}
 	&.more::after {
-		content: '\19f';
-		font-size: 24px;
+		content: '\1ea';
+		font-size: 16px;
+		height: 6px;
 	}
 	&.align-left::after {
-		content: '\1c5';
+		content: '\18b';
 		font-size: 24px;
 	}
 	&.align-center::after {
-		content: '\1c7';
+		content: '\18d';
 		font-size: 24px;
 	}
 	&.align-right::after {
-		content: '\1c9';
+		content: '\18f';
 		font-size: 24px;
 	}
 	&.align-justified::after {
-		content: '\1cb';
+		content: '\191';
+		font-size: 24px;
+	}
+	&.chevron-left::after {
+		content: '\178';
+		font-size: 24px;
+	}
+	&.chevron-left2::after {
+		content: '\177';
+		font-size: 24px;
+		transform: rotate(180deg);
+	}
+	&.chevron-right::after {
+		content: '\179';
+		font-size: 24px;
+	}
+	&.chevron-right2::after {
+		content: '\177';
 		font-size: 24px;
 	}
 	&.chevron-down::after {
-		content: '\156';
+		content: '\17a';
 		font-size: 24px;
 	}
 	&.chevron-up::after {
-		content: '\156';
+		content: '\17a';
 		font-size: 24px;
 		transform: rotate(180deg);
+	}
+	&.caret-right::after {
+		content: '\16e';
+		font-size: 16px;
 	}
 }
 

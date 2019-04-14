@@ -1,5 +1,5 @@
 <template lang="pug">
-.codeTester
+.scriptRunner
 	textarea.code-editor(type='textarea' spellcheck='false' ref='code')
 	.buttons
 		a(@click='disableCode') Remove and disable code
@@ -9,22 +9,24 @@
 <script>
 export default {
   mounted() {
-    if (localStorage.getItem("pluginCodeTesterCode") === null) {
+    if (localStorage.getItem("figmaPlus-scriptRunnerCode") === null) {
       this.$refs.code.value = `figmaPlus.createPluginsMenuItem(
     'Hello world!',
-    () => alert('Hello world!')
+    () => figmaPlus.showToast('Hello world!')
 );`;
     } else {
-      this.$refs.code.value = localStorage.getItem("pluginCodeTesterCode");
+      this.$refs.code.value = localStorage.getItem(
+        "figmaPlus-scriptRunnerCode"
+      );
     }
   },
   methods: {
     runCode() {
-      localStorage.setItem("pluginCodeTesterCode", this.$refs.code.value);
+      localStorage.setItem("figmaPlus-scriptRunnerCode", this.$refs.code.value);
       location.reload();
     },
     disableCode() {
-      localStorage.removeItem("pluginCodeTesterCode");
+      localStorage.removeItem("figmaPlus-scriptRunnerCode");
       this.$refs.code.value = "";
     }
   }
@@ -32,7 +34,7 @@ export default {
 </script>
 
 <style lang="scss">
-.codeTester {
+.scriptRunner {
   display: flex;
   flex-direction: column;
   textarea.code-editor {

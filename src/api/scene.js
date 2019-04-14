@@ -1,4 +1,29 @@
-export const getNode = node => {
+export const scene = {
+	getNodeById(nodeId) {
+		return getNode(nodeId);
+	},
+	zoomOnNodes(nodes) {
+		const selectedNodes = Object.keys(App._state.mirror.sceneGraphSelection);
+		if (nodes.length === 0) return;
+		nodes = typeof nodes[0] === 'object' ? nodes.map(node => node.id) : nodes;
+		App.sendMessage('clearSelection');
+		App.sendMessage('addToSelection', { nodeIds: nodes });
+		App.triggerAction('zoom-to-selection');
+		App.sendMessage('clearSelection');
+		if (selectedNodes.length > 0) App.sendMessage('addToSelection', { nodeIds: selectedNodes });
+	},
+	panToNode(node) {
+		node = typeof node === 'object' ? node.id : node;
+		App.panToNode(node);
+	},
+	centerOnPoint(point, zoomScale) {
+		zoomScale = zoomScale ? zoomScale : 1;
+		App.sendMessage('setCanvasSpaceCenter', { x: point.x, y: point.y });
+		App.sendMessage('updateActiveCanvasCurrentZoom', { zoom: zoomScale });
+	}
+};
+
+const getNode = node => {
 	const sceneNode = App._state.mirror.sceneGraph.get(node);
 	const newNode = { id: sceneNode.guid, type: sceneNode.type };
 	if (sceneNode.parent) {
@@ -46,9 +71,9 @@ export const getNode = node => {
 			}
 		}
 	});
-	if (sceneNode.children.length !== 0) {
+	if (sceneNode.reversedChildren.length !== 0) {
 		Object.defineProperty(newNode, 'children', {
-			value: sceneNode.children.map(child => {
+			value: sceneNode.reversedChildren.map(child => {
 				return getNode(child);
 			})
 		});
@@ -84,10 +109,12 @@ export const getNode = node => {
 		newNode.getProperties = async () => {
 			if (!(newNode.type === 'DOCUMENT' || newNode.type === 'CANVAS')) {
 				const selectedNodes = Object.keys(App._state.mirror.sceneGraphSelection);
-				App.sendMessage('clearSelection');
-				await until(() => window.App._state.mirror.selectionProperties.visible === null);
-				App.sendMessage('addToSelection', { nodeIds: [newNode.id] });
-				await until(() => window.App._state.mirror.selectionProperties.visible !== null);
+				if (selectedNodes.length !== 1 || (selectedNodes.length === 1 && newNode.id !== selectedNodes[0])) {
+					App.sendMessage('clearSelection');
+					await until(() => window.App._state.mirror.selectionProperties.visible === null);
+					App.sendMessage('addToSelection', { nodeIds: [newNode.id] });
+					await until(() => window.App._state.mirror.selectionProperties.visible !== null);
+				}
 				const result = App._state.mirror.selectionProperties;
 				Object.defineProperties(newNode, {
 					size: {
@@ -171,6 +198,14 @@ export const getNode = node => {
 						},
 						set(val) {
 							updateProperties(this.id, { height: val });
+						}
+					},
+					exportSettings: {
+						get() {
+							return result.exportSettings;
+						},
+						set(val) {
+							updateProperties(this.id, { exportSettings: val });
 						}
 					}
 				});
@@ -643,6 +678,29 @@ export const getNode = node => {
 	if (newNode.children) {
 		newNode.getAllDescendents = () => getAllDescendents(newNode);
 	}
+	newNode.exportAsImageAsync = async scale => {
+		const selectedNodes = Object.keys(App._state.mirror.sceneGraphSelection);
+		if (selectedNodes.length !== 1 || (selectedNodes.length === 1 && newNode.id !== selectedNodes[0])) {
+			App.sendMessage('clearSelection');
+			await until(() => window.App._state.mirror.selectionProperties.visible === null);
+			App.sendMessage('addToSelection', { nodeIds: [newNode.id] });
+			await until(() => window.App._state.mirror.selectionProperties.visible !== null);
+		}
+		const nodeWithProperties = await newNode.getProperties();
+		const originalExportSettings = nodeWithProperties.exportSettings;
+		const newExportSettings = [
+			{
+				contentsOnly: true,
+				imageType: 'PNG',
+				constraint: { type: 'CONTENT_SCALE', value: scale || 1 },
+				suffix: ''
+			}
+		];
+		if (originalExportSettings !== newExportSettings) nodeWithProperties.exportSettings = newExportSettings;
+		const buffer = await getBufferForSelectedNode();
+		nodeWithProperties.exportSettings = originalExportSettings;
+		return buffer;
+	};
 	return newNode;
 };
 
@@ -661,30 +719,6 @@ const getAllDescendents = node => {
 	return descendents;
 };
 
-export const scene = {
-	getNodeById(nodeId) {
-		return getNode(nodeId);
-	},
-	zoomOnNodes(nodes) {
-		const selectedNodes = Object.keys(App._state.mirror.sceneGraphSelection);
-		if (nodes.length === 0) return;
-		nodes = typeof nodes[0] === 'object' ? nodes.map(node => node.id) : nodes;
-		App.sendMessage('clearSelection');
-		App.sendMessage('addToSelection', { nodeIds: nodes });
-		App.triggerAction('zoom-to-selection');
-		App.sendMessage('clearSelection');
-		if (selectedNodes.length > 0) App.sendMessage('addToSelection', { nodeIds: selectedNodes });
-	},
-	panToNode(node) {
-		node = typeof node === 'object' ? node.id : node;
-		App.panToNode(node);
-	},
-	centerOnPoint(point, zoomScale) {
-		zoomScale = zoomScale ? zoomScale : 1;
-		App.sendMessage('setCanvasSpaceCenter', { x: point.x, y: point.y });
-		App.sendMessage('updateActiveCanvasCurrentZoom', { zoom: zoomScale });
-	}
-};
 Object.defineProperties(scene, {
 	root: {
 		get() {
@@ -723,11 +757,43 @@ const until = conditionFunction => {
 };
 
 const updateProperties = async (id, properties) => {
-	if (Object.keys(App._state.mirror.sceneGraphSelection)[0] !== id) {
+	const selectedNodes = Object.keys(App._state.mirror.sceneGraphSelection);
+	if (selectedNodes.length !== 1 || (selectedNodes.length === 1 && id !== selectedNodes[0])) {
 		App.sendMessage('clearSelection');
 		await until(() => window.App._state.mirror.selectionProperties.visible === null);
 		App.sendMessage('addToSelection', { nodeIds: [id] });
 		await until(() => window.App._state.mirror.selectionProperties.visible !== null);
 	}
 	App.updateSelectionProperties(properties);
+};
+
+const getBufferForSelectedNode = () => {
+	return new Promise(resolve => {
+		const oldCreateElementFn = document.createElement;
+		const dummyElement = document.createElement('a');
+		document.createElement = () => {
+			const result = dummyElement;
+			result.click = () => {
+				document.createElement = oldCreateElementFn;
+			};
+			return result;
+		};
+
+		const oldCreateObjectURLFn = URL.createObjectURL;
+		URL.createObjectURL = (...args) => {
+			const blob = args[0];
+			const reader = new FileReader();
+			reader.onload = () => {
+				resolve({
+					getBlob: blob,
+					getBytes: reader.result,
+					getUrl: oldCreateObjectURLFn(blob)
+				});
+				URL.createObjectURL = oldCreateObjectURLFn;
+			};
+			reader.readAsArrayBuffer(args[0]);
+		};
+
+		App.triggerAction('export-selected-exportables-direct');
+	});
 };

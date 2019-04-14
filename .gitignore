@@ -3,6 +3,7 @@ node_modules
 extension.zip
 screenshot
 .vscode
+dev-dist/
 
 # local env files
 .env.local

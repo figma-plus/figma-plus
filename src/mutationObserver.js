@@ -9,25 +9,26 @@ export function startMutationObserver() {
 	let numberOfSubmenus = 0;
 	new MutationObserver(mutations => {
 		window.dispatchEvent(new CustomEvent('domChanged', { detail: mutations }));
-		if (document.querySelector('div[class*="sidebar--navDefault-"]') && !fileBrowserLoaded) {
-			fileBrowserLoaded = true;
-			window.dispatchEvent(new CustomEvent('fileBrowserLoaded'));
-		}
 
-		if (window.App !== undefined && !appLoaded) {
+		if (window.App._state !== undefined && !appLoaded) {
 			appLoaded = true;
 			window.dispatchEvent(new CustomEvent('appLoaded'));
 		}
 
+		if (document.querySelector('div[class*="sidebar__REFRESH--navDefault-"]') && !fileBrowserLoaded) {
+			fileBrowserLoaded = true;
+			window.dispatchEvent(new CustomEvent('fileBrowserLoaded'));
+		}
+
 		if (
 			!document.getElementById('pluginManagerButton') &&
-			document.querySelector('div[class*="sidebar--navDefault-"]') &&
+			document.querySelector('div[class*="sidebar__REFRESH--navDefault-"]') &&
 			fileBrowserLoaded
 		) {
 			window.dispatchEvent(new CustomEvent('fileBrowserChanged'));
 		}
 
-		if (!document.querySelector('div[class*="sidebar--navDefault-"]') && fileBrowserLoaded) {
+		if (!document.querySelector('div[class*="sidebar__REFRESH--navDefault-"]') && fileBrowserLoaded) {
 			fileBrowserLoaded = false;
 			window.dispatchEvent(new CustomEvent('fileBrowserUnloaded'));
 		}
@@ -63,7 +64,7 @@ export function startMutationObserver() {
 					detail: {
 						type: window.App._state.dropdownShown.type,
 						hasMoreOptions:
-							[...document.querySelectorAll('div[class*="multilevel_dropdown--name"]')].find(
+							[...document.querySelectorAll('div[class*="multilevel_dropdown__REFRESH--name"]')].find(
 								node => node.innerText === 'More'
 							) !== undefined
 					}
@@ -74,21 +75,21 @@ export function startMutationObserver() {
 		if (
 			window.App._state.dropdownShown &&
 			menuOpened &&
-			document.querySelector('div[class*="multilevel_dropdown--menu"]') &&
-			document.querySelectorAll('div[class*="multilevel_dropdown--menu"]').length > numberOfSubmenus
+			document.querySelector('div[class*="multilevel_dropdown__REFRESH--menu"]') &&
+			document.querySelectorAll('div[class*="multilevel_dropdown__REFRESH--menu"]').length > numberOfSubmenus
 		) {
 			window.dispatchEvent(
 				new CustomEvent('submenuOpened', {
 					detail: {
 						type: window.App._state.dropdownShown.type,
-						highlightedOption: document.querySelectorAll('div[class*="multilevel_dropdown--optionActive"]')[
-							document.querySelectorAll('div[class*="multilevel_dropdown--menu"]').length - 1
+						highlightedOption: document.querySelectorAll('div[class*="multilevel_dropdown__REFRESH--optionActive"]')[
+							document.querySelectorAll('div[class*="multilevel_dropdown__REFRESH--menu"]').length - 1
 						].textContent
 					}
 				})
 			);
 		}
-		numberOfSubmenus = document.querySelectorAll('div[class*="multilevel_dropdown--menu"]').length;
+		numberOfSubmenus = document.querySelectorAll('div[class*="multilevel_dropdown__REFRESH--menu"]').length;
 
 		if (!window.App._state.dropdownShown && menuOpened) {
 			menuOpened = false;

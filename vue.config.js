@@ -1,5 +1,3 @@
-const CopyWebpackPlugin = require('copy-webpack-plugin');
-
 module.exports = {
 	filenameHashing: false,
 	productionSourceMap: false,
@@ -15,15 +13,7 @@ module.exports = {
 			}
 		},
 		output: {
-			jsonpFunction: 'pluginManager'
-		},
-		plugins: [
-			new CopyWebpackPlugin([
-				{
-					from: './src/contentScript.js',
-					to: 'js'
-				}
-			])
-		]
+			jsonpFunction: 'figmaPlus'
+		}
 	}
 };
