@@ -92,19 +92,19 @@ export default {
     requiredTeams() {
       if (this.plugin.requiredTeamIds) {
         return this.plugin.requiredTeamIds.map(
-          teamId => figmaPlus.getTeams()[teamId]
+          teamId => figmaPlus.teams[teamId]
         );
       } else return false;
     },
     orgImage() {
       if (this.plugin.requiredOrgId) {
-        const org = figmaPlus.getOrgs()[this.plugin.requiredOrgId];
+        const org = figmaPlus.orgs[this.plugin.requiredOrgId];
         return org.img_url ? org.img_url : org.name[0];
       } else return false;
     },
     orgName() {
       if (this.plugin.requiredOrgId) {
-        return figmaPlus.getOrgs()[this.plugin.requiredOrgId].name;
+        return figmaPlus.orgs[this.plugin.requiredOrgId].name;
       } else return false;
     },
     latestUpdate() {

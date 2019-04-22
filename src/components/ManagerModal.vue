@@ -196,9 +196,6 @@ export default {
                 !plugin.requiredTeamIds || plugin.requiredTeamIds.length === 0
             );
 
-      availablePlugins = availablePlugins.filter(plugin => {
-        return figmaPlus.isDesktop ? !plugin.webOnly : !plugin.desktopOnly;
-      });
       if (this.currentTab === "Plugins") {
         return availablePlugins
           .filter(plugin => {
