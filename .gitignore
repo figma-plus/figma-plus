@@ -5,6 +5,8 @@ screenshot
 .vscode
 dev-dist/
 firebaseConfig.js
+package-lock.json
+yarn.locl
 
 # local env files
 .env.local

@@ -21,6 +21,7 @@
 		"vuefire": "^2.0.0-alpha.21"
 	},
 	"devDependencies": {
+		"@vue/cli": "^3.6.3",
 		"@vue/cli-plugin-babel": "^3.4.1",
 		"@vue/cli-service": "^3.4.1",
 		"babel-helper-vue-jsx-merge-props": "^2.0.3",
