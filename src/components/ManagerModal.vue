@@ -30,7 +30,9 @@ import DetailScreen from "./DetailScreen";
 import DeveloperScreen from "./DeveloperScreen";
 import PluginsMenu from "./PluginsMenu.vue";
 import sha256 from "hash.js/lib/hash/sha/256";
-import firebase from "firebase";
+import firebase from "firebase/app";
+import "firebase/firestore";
+import "firebase/auth";
 import firebaseConfig from "./../../firebaseConfig.js";
 
 firebase.initializeApp(firebaseConfig);

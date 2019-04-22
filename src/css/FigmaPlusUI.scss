@@ -42,7 +42,7 @@ body {
 	}
 
 	h3 {
-		color: #b3b3b3;
+		color: #aaa;
 		font-weight: inherit;
 		font-size: inherit;
 		margin-bottom: 8px;
@@ -87,7 +87,7 @@ body {
 				border-color: rgba(0, 0, 0, 0.3);
 			}
 			&:focus {
-				border-color: #b3b3b3;
+				border-color: #aaa;
 				background-clip: border-box;
 			}
 			&:disabled {
@@ -115,7 +115,7 @@ body {
 			border: 1px solid rgba(0, 0, 0, 0.1);
 		}
 		&:not(:disabled):not(:hover):placeholder-shown {
-			color: #b3b3b3;
+			color: #aaa;
 			background: linear-gradient(90deg, transparent 6px, rgba(0, 0, 0, 0.1) 0);
 			background-size: calc(100% - 6px) 1px;
 			background-position: left bottom -1px;
@@ -398,7 +398,7 @@ body {
 
 .modal-tab {
 	text-transform: capitalize;
-	color: #b3b3b3;
+	color: #aaa;
 	font-weight: 500;
 	padding: 0 8px;
 	&.active {

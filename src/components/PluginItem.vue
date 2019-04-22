@@ -52,28 +52,28 @@ export default {
     color: #000;
   }
   .update-text {
-    color: #aaaaaa;
+    color: #aaa;
     position: absolute;
     top: 24px;
     right: 48px;
   }
   .name {
     display: inline-block;
-    color: #444444;
+    color: #333;
     font-size: 14px;
   }
   .version {
     display: inline-block;
-    color: #aaaaaa;
+    color: #aaa;
     margin-left: 8px;
   }
   .author {
     margin-top: 3px;
-    color: #aaaaaa;
+    color: #aaa;
   }
   .description {
     margin-top: 8px;
-    color: #aaaaaa;
+    color: #aaa;
     overflow: hidden;
     display: -webkit-box;
     -webkit-line-clamp: 2;
