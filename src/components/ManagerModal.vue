@@ -189,7 +189,7 @@ export default {
                 (plugin.requiredTeamIds.some(id =>
                   this.myTeams.find(teamId => teamId === id)
                 ) &&
-                  plugin.requiredTeamIds.some(id => figmaPlus.getTeams()[id]))
+                  plugin.requiredTeamIds.some(id => figmaPlus.teams[id]))
             )
           : availablePlugins.filter(
               plugin =>
@@ -197,7 +197,7 @@ export default {
             );
 
       availablePlugins = availablePlugins.filter(plugin => {
-        return figmaPlus.isDesktop() ? !plugin.webOnly : !plugin.desktopOnly;
+        return figmaPlus.isDesktop ? !plugin.webOnly : !plugin.desktopOnly;
       });
       if (this.currentTab === "Plugins") {
         return availablePlugins
@@ -398,9 +398,9 @@ export default {
         }
       });
 
-      const currentOrgId = figmaPlus.getMyOrgId();
+      const currentOrgId = figmaPlus.myOrgId;
       this.myOrgId = currentOrgId;
-      const myTeams = figmaPlus.getMyTeams().map(team => team.id);
+      const myTeams = figmaPlus.myTeams.map(team => team.id);
       this.myTeams = myTeams;
       if (this.numberOfUpdates > 0) this.currentTab = "Installed";
       this.$modal.show("pluginManagerModal");
@@ -441,11 +441,11 @@ export default {
     install(plugin) {
       this.installedPlugins.push(plugin);
       figmaPlus.showToast(
-        figmaPlus.isDesktop()
+        figmaPlus.isDesktop
           ? "Plugin installed. Refresh opened tabs to see changes."
           : "Plugin installed. Refresh this page to see changes.",
         10,
-        figmaPlus.isDesktop() ? "Refresh this tab" : "Refresh",
+        figmaPlus.isDesktop ? "Refresh this tab" : "Refresh",
         () => location.reload()
       );
 
@@ -473,11 +473,11 @@ export default {
       this.detailScreenOn = false;
 
       figmaPlus.showToast(
-        figmaPlus.isDesktop()
+        figmaPlus.isDesktop
           ? "Plugin uninstalled. Refresh opened tabs to see changes."
           : "Plugin uninstalled. Refresh this page to see changes.",
         10,
-        figmaPlus.isDesktop() ? "Refresh this tab" : "Refresh",
+        figmaPlus.isDesktop ? "Refresh this tab" : "Refresh",
         () => location.reload()
       );
 

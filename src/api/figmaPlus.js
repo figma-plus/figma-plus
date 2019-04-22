@@ -196,14 +196,46 @@ export const figmaPlus = {
 			App.panToNode(node);
 		}
 	},
-	toggleShowNodeId: () => App.triggerAction('toggle-show-guids'),
-	isDesktop: () => window.__figmaDesktop !== undefined,
-	getOrgs: () => App._state.orgById,
-	getMyOrgId: () => App._state.currentOrgId,
-	getTeams: () => App._state.teams,
-	getMyTeams: () => App._state.user.teams,
-	getFileKey: () => App._state.editingFileKey
+	toggleShowNodeId: () => App.triggerAction('toggle-show-guids')
 };
+
+Object.defineProperties(figmaPlus, {
+	isDesktop: {
+		get() {
+			return window.__figmaDesktop !== undefined;
+		}
+	},
+	orgs: {
+		get() {
+			return App._state.orgById;
+		}
+	},
+	myOrg: {
+		get() {
+			return App._state.currentOrgId;
+		}
+	},
+	teams: {
+		get() {
+			return App._state.teams;
+		}
+	},
+	myTeams: {
+		get() {
+			return App._state.user.teams;
+		}
+	},
+	fileKey: {
+		get() {
+			return App._state.editingFileKey;
+		}
+	},
+	fileName: {
+		get() {
+			return App.getCurrentFileName();
+		}
+	}
+});
 
 Object.defineProperties(figmaPlus.viewport, {
 	center: {

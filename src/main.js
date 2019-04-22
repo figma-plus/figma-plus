@@ -87,19 +87,22 @@ if (scriptRunnerCode && window.pluginDevMode) {
 	document.head.appendChild(script);
 }
 
-if (!localStorage.getItem('figmaPlus-onboarded'))
-	figmaPlus.showUI({
-		title: 'Welcome to Figma Plus',
-		callback: modalElement => {
-			new figmaPlus.Vue({
-				el: modalElement,
-				render: h => h(OnboardingModal)
-			});
-		},
-		width: 400,
-		height: 425,
-		overlay: true,
-		paddings: false
+if (!localStorage.getItem('figmaPlus-onboarded')) {
+	figmaPlus.onFileBrowserLoaded(() => {
+		figmaPlus.showUI({
+			title: 'Welcome to Figma Plus',
+			callback: modalElement => {
+				new figmaPlus.Vue({
+					el: modalElement,
+					render: h => h(OnboardingModal)
+				});
+			},
+			width: 400,
+			height: 425,
+			overlay: true,
+			paddings: false
+		});
 	});
+}
 
 startMutationObserver();
