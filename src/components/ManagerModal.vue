@@ -31,15 +31,9 @@ import DeveloperScreen from "./DeveloperScreen";
 import PluginsMenu from "./PluginsMenu.vue";
 import sha256 from "hash.js/lib/hash/sha/256";
 import firebase from "firebase";
+import firebaseConfig from "./../../firebaseConfig.js";
 
-firebase.initializeApp({
-  apiKey: "AIzaSyBIE7Uc1zQaJn__j1PYraJc90bVCCkaux4",
-  authDomain: "figma-plus.firebaseapp.com",
-  databaseURL: "https://figma-plus.firebaseio.com",
-  projectId: "figma-plus",
-  storageBucket: "figma-plus.appspot.com",
-  messagingSenderId: "610349397276"
-});
+firebase.initializeApp(firebaseConfig);
 
 const db = firebase.firestore();
 
@@ -79,7 +73,6 @@ export default {
       localStorage.setItem("figmaPlus-installedPlugins", JSON.stringify(array));
     }
   },
-  created() {},
   beforeMount() {
     figmaPlus.onFileBrowserLoaded(() => {
       if (this.modalOpened) this.hide();
@@ -381,30 +374,6 @@ export default {
       firebase.auth().onAuthStateChanged(user => {
         if (user) {
           this.user = user;
-          // this.$bind("plugins_stats", db.collection("plugins_stats")).then(
-          //   stats => {
-          //     this.pluginStats === stats;
-          //   }
-          // );
-          // this.$bind(
-          //   "users_installed_plugins",
-          //   db.collection("users_installed_plugins")
-          // ).then(collection => {
-          //   this.users_installed_plugins === collection;
-          // });
-          // this.$bind(
-          //   "users_count_limits",
-          //   db.collection("users_count_limits")
-          // ).then(collection => {
-          //   this.users_count_limits === collection;
-          // });
-          // db.collection("users_installed_plugins")
-          //   .doc(user.uid)
-          //   .get()
-          //   .then(doc => {
-          //     // this.updateInstalls(doc);
-          //   })
-          //   .catch(error => console.log);
         } else {
           console.log("not signed in, signing in");
           firebase
@@ -481,7 +450,7 @@ export default {
       let userData = this.users_installed_plugins.find(
         user => user.id === this.userHash
       );
-      if (userData) {
+      if (!userData) {
         db.collection("users_installed_plugins")
           .doc(this.user.uid)
           .set({
@@ -493,38 +462,7 @@ export default {
           .update({
             plugins: firebase.firestore.FieldValue.arrayUnion(plugin.id)
           });
-        let stat = this.pluginStats.find(
-          pluginStat => pluginStat.id === plugin.id
-        );
-        if (stat) {
-          db.collection("plugins_stats")
-            .doc(plugin.id)
-            .update({ installs: stat.installs + 1 });
-        } else {
-          db.collection("plugins_stats")
-            .doc(plugin.id)
-            .set({ installs: 1, uninstalls: 0 });
-        }
       }
-      // let userCountLimits = this.users_count_limits.find(
-      //   user => user.id === this.userHash
-      // );
-      // if (userCountLimits) {
-      //   db.collection("users_count_limits")
-      //     .doc(this.user.uid)
-      //     .update({
-      //       installCountLimits: firebase.firestore.FieldValue.arrayUnion({
-      //         [plugin.id]: new Date()
-      //       })
-      //     });
-      // } else {
-      //   db.collection("users_count_limits")
-      //     .doc(this.user.uid)
-      //     .set({
-      //       installCountLimits: [{ [plugin.id]: new Date() }],
-      //       uninstallCountLimits: []
-      //     });
-      // }
     },
     uninstall(plugin) {
       this.installedPlugins = this.installedPlugins.filter(
@@ -544,7 +482,7 @@ export default {
       let userData = this.users_installed_plugins.find(
         user => user.id === this.userHash
       );
-      if (userData) {
+      if (!userData) {
         db.collection("users_installed_plugins")
           .doc(this.user.uid)
           .set({
@@ -556,18 +494,6 @@ export default {
           .update({
             plugins: firebase.firestore.FieldValue.arrayRemove(plugin.id)
           });
-        let stat = this.pluginStats.find(
-          pluginStat => pluginStat.id === plugin.id
-        );
-        if (stat) {
-          db.collection("plugins_stats")
-            .doc(plugin.id)
-            .update({ uninstalls: stat.uninstalls + 1 });
-        } else {
-          db.collection("plugins_stats")
-            .doc(plugin.id)
-            .set({ installs: 0, uninstalls: 0 });
-        }
       }
     }
   }
