@@ -1,29 +1,4 @@
-export const scene = {
-	getNodeById(nodeId) {
-		return getNode(nodeId);
-	},
-	zoomOnNodes(nodes) {
-		const selectedNodes = Object.keys(App._state.mirror.sceneGraphSelection);
-		if (nodes.length === 0) return;
-		nodes = typeof nodes[0] === 'object' ? nodes.map(node => node.id) : nodes;
-		App.sendMessage('clearSelection');
-		App.sendMessage('addToSelection', { nodeIds: nodes });
-		App.triggerAction('zoom-to-selection');
-		App.sendMessage('clearSelection');
-		if (selectedNodes.length > 0) App.sendMessage('addToSelection', { nodeIds: selectedNodes });
-	},
-	panToNode(node) {
-		node = typeof node === 'object' ? node.id : node;
-		App.panToNode(node);
-	},
-	centerOnPoint(point, zoomScale) {
-		zoomScale = zoomScale ? zoomScale : 1;
-		App.sendMessage('setCanvasSpaceCenter', { x: point.x, y: point.y });
-		App.sendMessage('updateActiveCanvasCurrentZoom', { zoom: zoomScale });
-	}
-};
-
-const getNode = node => {
+export const getNode = node => {
 	const sceneNode = App._state.mirror.sceneGraph.get(node);
 	const newNode = { id: sceneNode.guid, type: sceneNode.type };
 	if (sceneNode.parent) {
@@ -214,29 +189,39 @@ const getNode = node => {
 					Object.keys(result.inheritFillStyleID)[0] !== '__mixed__' &&
 					result.inheritFillStyleID.sessionID !== 4294967295
 				) {
-					Object.defineProperties(newNode, {
-						inheritFillStyleID: {
-							get() {
-								return result.inheritFillStyleID;
-							},
-							set(val) {
-								updateProperties(this.id, { inheritFillStyleID: val });
-							}
+					Object.defineProperty(newNode, 'fillStyleId', {
+						get() {
+							return result.inheritFillStyleKey;
 						},
-						inheritFillStyleKey: {
-							get() {
-								return result.inheritFillStyleKey;
-							},
-							set(val) {
-								updateProperties(this.id, { inheritFillStyleKey: val });
-							}
-						},
-						inheritFillStyleName: {
-							get() {
-								return result.inheritFillStyleName;
-							},
-							set(val) {
-								updateProperties(this.id, { inheritFillStyleName: val });
+						set(val) {
+							const styles = Object.values(App._state.library.published.styles)
+								.map(org => Object.values(org))
+								.flat()
+								.map(team => Object.values(team))
+								.flat()
+								.concat(Object.values(App._state.library.local.styles));
+							const style = styles.find(style => style.key === val);
+							if (style.canvas_url) {
+								var xhr = new XMLHttpRequest();
+								xhr.open('GET', style.canvas_url);
+								xhr.responseType = 'arraybuffer';
+								xhr.onload = () => {
+									const localGUID = App.sendMessage(
+										'getOrCreateSubscribedStyleNodeId',
+										{
+											styleKey: style.key,
+											fileKey: style.file_key,
+											editingFileKey: App._state.editingFileKey,
+											versionHash: style.content_hash
+										},
+										new Uint8Array(xhr.response)
+									).args.localGUID.split(':');
+									updateProperties(this.id, { inheritFillStyleID: { sessionID: localGUID[0], localID: localGUID[1] } });
+								};
+								xhr.send();
+							} else {
+								const localGUID = style.node_id.split(':');
+								updateProperties(this.id, { inheritFillStyleID: { sessionID: localGUID[0], localID: localGUID[1] } });
 							}
 						}
 					});
@@ -246,29 +231,43 @@ const getNode = node => {
 					Object.keys(result.inheritFillStyleIDForStroke)[0] !== '__mixed__' &&
 					result.inheritFillStyleIDForStroke.sessionID !== 4294967295
 				) {
-					Object.defineProperties(newNode, {
-						inheritFillStyleIDForStroke: {
-							get() {
-								return result.inheritFillStyleIDForStroke;
-							},
-							set(val) {
-								updateProperties(this.id, { inheritFillStyleIDForStroke: val });
-							}
+					Object.defineProperty(newNode, 'strokeStyleId', {
+						get() {
+							return result.inheritFillStyleKeyForStroke;
 						},
-						inheritFillStyleKeyForStroke: {
-							get() {
-								return result.inheritFillStyleKeyForStroke;
-							},
-							set(val) {
-								updateProperties(this.id, { inheritFillStyleKeyForStroke: val });
-							}
-						},
-						inheritFillStyleNameForStroke: {
-							get() {
-								return result.inheritFillStyleNameForStroke;
-							},
-							set(val) {
-								updateProperties(this.id, { inheritFillStyleNameForStroke: val });
+						set(val) {
+							const styles = Object.values(App._state.library.published.styles)
+								.map(org => Object.values(org))
+								.flat()
+								.map(team => Object.values(team))
+								.flat()
+								.concat(Object.values(App._state.library.local.styles));
+							const style = styles.find(style => style.key === val);
+							if (style.canvas_url) {
+								var xhr = new XMLHttpRequest();
+								xhr.open('GET', style.canvas_url);
+								xhr.responseType = 'arraybuffer';
+								xhr.onload = () => {
+									const localGUID = App.sendMessage(
+										'getOrCreateSubscribedStyleNodeId',
+										{
+											styleKey: style.key,
+											fileKey: style.file_key,
+											editingFileKey: App._state.editingFileKey,
+											versionHash: style.content_hash
+										},
+										new Uint8Array(xhr.response)
+									).args.localGUID.split(':');
+									updateProperties(this.id, {
+										inheritFillStyleIDForStroke: { sessionID: localGUID[0], localID: localGUID[1] }
+									});
+								};
+								xhr.send();
+							} else {
+								const localGUID = style.node_id.split(':');
+								updateProperties(this.id, {
+									inheritFillStyleIDForStroke: { sessionID: localGUID[0], localID: localGUID[1] }
+								});
 							}
 						}
 					});
@@ -278,29 +277,43 @@ const getNode = node => {
 					Object.keys(result.inheritFillStyleIDForBackground)[0] !== '__mixed__' &&
 					result.inheritFillStyleIDForBackground.sessionID !== 4294967295
 				) {
-					Object.defineProperties(newNode, {
-						inheritFillStyleIDForBackground: {
-							get() {
-								return result.inheritFillStyleIDForBackground;
-							},
-							set(val) {
-								updateProperties(this.id, { inheritFillStyleIDForBackground: val });
-							}
+					Object.defineProperty(newNode, 'backgroundStyleId', {
+						get() {
+							return result.inheritFillStyleKeyForBackground;
 						},
-						inheritFillStyleKeyForBackground: {
-							get() {
-								return result.inheritFillStyleKeyForBackground;
-							},
-							set(val) {
-								updateProperties(this.id, { inheritFillStyleKeyForBackground: val });
-							}
-						},
-						inheritFillStyleNameForBackground: {
-							get() {
-								return result.inheritFillStyleNameForBackground;
-							},
-							set(val) {
-								updateProperties(this.id, { inheritFillStyleNameForBackground: val });
+						set(val) {
+							const styles = Object.values(App._state.library.published.styles)
+								.map(org => Object.values(org))
+								.flat()
+								.map(team => Object.values(team))
+								.flat()
+								.concat(Object.values(App._state.library.local.styles));
+							const style = styles.find(style => style.key === val);
+							if (style.canvas_url) {
+								var xhr = new XMLHttpRequest();
+								xhr.open('GET', style.canvas_url);
+								xhr.responseType = 'arraybuffer';
+								xhr.onload = () => {
+									const localGUID = App.sendMessage(
+										'getOrCreateSubscribedStyleNodeId',
+										{
+											styleKey: style.key,
+											fileKey: style.file_key,
+											editingFileKey: App._state.editingFileKey,
+											versionHash: style.content_hash
+										},
+										new Uint8Array(xhr.response)
+									).args.localGUID.split(':');
+									updateProperties(this.id, {
+										inheritFillStyleIDForBackground: { sessionID: localGUID[0], localID: localGUID[1] }
+									});
+								};
+								xhr.send();
+							} else {
+								const localGUID = style.node_id.split(':');
+								updateProperties(this.id, {
+									inheritFillStyleIDForBackground: { sessionID: localGUID[0], localID: localGUID[1] }
+								});
 							}
 						}
 					});
@@ -310,29 +323,85 @@ const getNode = node => {
 					Object.keys(result.inheritEffectStyleID)[0] !== '__mixed__' &&
 					result.inheritEffectStyleID.sessionID !== 4294967295
 				) {
-					Object.defineProperties(newNode, {
-						inheritEffectStyleID: {
-							get() {
-								return result.inheritEffectStyleID;
-							},
-							set(val) {
-								updateProperties(this.id, { inheritEffectStyleID: val });
-							}
+					Object.defineProperty(newNode, 'effectStyleId', {
+						get() {
+							return result.inheritEffectStyleKey;
 						},
-						inheritEffectStyleKey: {
-							get() {
-								return result.inheritEffectStyleKey;
-							},
-							set(val) {
-								updateProperties(this.id, { inheritEffectStyleKey: val });
+						set(val) {
+							const styles = Object.values(App._state.library.published.styles)
+								.map(org => Object.values(org))
+								.flat()
+								.map(team => Object.values(team))
+								.flat()
+								.concat(Object.values(App._state.library.local.styles));
+							const style = styles.find(style => style.key === val);
+							if (style.canvas_url) {
+								var xhr = new XMLHttpRequest();
+								xhr.open('GET', style.canvas_url);
+								xhr.responseType = 'arraybuffer';
+								xhr.onload = () => {
+									const localGUID = App.sendMessage(
+										'getOrCreateSubscribedStyleNodeId',
+										{
+											styleKey: style.key,
+											fileKey: style.file_key,
+											editingFileKey: App._state.editingFileKey,
+											versionHash: style.content_hash
+										},
+										new Uint8Array(xhr.response)
+									).args.localGUID.split(':');
+									updateProperties(this.id, {
+										inheritEffectStyleID: { sessionID: localGUID[0], localID: localGUID[1] }
+									});
+								};
+								xhr.send();
+							} else {
+								const localGUID = style.node_id.split(':');
+								updateProperties(this.id, { inheritEffectStyleID: { sessionID: localGUID[0], localID: localGUID[1] } });
 							}
+						}
+					});
+				}
+				if (
+					result.inheritGridStyleID &&
+					Object.keys(result.inheritGridStyleID)[0] !== '__mixed__' &&
+					result.inheritGridStyleID.sessionID !== 4294967295
+				) {
+					Object.defineProperty(newNode, 'effectStyleId', {
+						get() {
+							return result.inheritGridStyleKey;
 						},
-						inheritEffectStyleName: {
-							get() {
-								return result.inheritEffectStyleName;
-							},
-							set(val) {
-								updateProperties(this.id, { inheritEffectStyleName: val });
+						set(val) {
+							const styles = Object.values(App._state.library.published.styles)
+								.map(org => Object.values(org))
+								.flat()
+								.map(team => Object.values(team))
+								.flat()
+								.concat(Object.values(App._state.library.local.styles));
+							const style = styles.find(style => style.key === val);
+							if (style.canvas_url) {
+								var xhr = new XMLHttpRequest();
+								xhr.open('GET', style.canvas_url);
+								xhr.responseType = 'arraybuffer';
+								xhr.onload = () => {
+									const localGUID = App.sendMessage(
+										'getOrCreateSubscribedStyleNodeId',
+										{
+											styleKey: style.key,
+											fileKey: style.file_key,
+											editingFileKey: App._state.editingFileKey,
+											versionHash: style.content_hash
+										},
+										new Uint8Array(xhr.response)
+									).args.localGUID.split(':');
+									updateProperties(this.id, {
+										inheritGridStyleID: { sessionID: localGUID[0], localID: localGUID[1] }
+									});
+								};
+								xhr.send();
+							} else {
+								const localGUID = style.node_id.split(':');
+								updateProperties(this.id, { inheritGridStyleID: { sessionID: localGUID[0], localID: localGUID[1] } });
 							}
 						}
 					});
@@ -640,29 +709,43 @@ const getNode = node => {
 							Object.keys(result.inheritTextStyleID)[0] !== '__mixed__' &&
 							result.inheritTextStyleID.sessionID !== 4294967295
 						) {
-							Object.defineProperties(newNode, {
-								inheritTextStyleID: {
-									get() {
-										return result.inheritTextStyleID;
-									},
-									set(val) {
-										updateProperties(this.id, { inheritTextStyleID: val });
-									}
+							Object.defineProperty(newNode, 'textStyleId', {
+								get() {
+									return result.inheritTextStyleKey;
 								},
-								inheritTextStyleKey: {
-									get() {
-										return result.inheritTextStyleKey;
-									},
-									set(val) {
-										updateProperties(this.id, { inheritTextStyleKey: val });
-									}
-								},
-								inheritTextStyleName: {
-									get() {
-										return result.inheritTextStyleName;
-									},
-									set(val) {
-										updateProperties(this.id, { inheritTextStyleName: val });
+								set(val) {
+									const styles = Object.values(App._state.library.published.styles)
+										.map(org => Object.values(org))
+										.flat()
+										.map(team => Object.values(team))
+										.flat()
+										.concat(Object.values(App._state.library.local.styles));
+									const style = styles.find(style => style.key === val);
+									if (style.canvas_url) {
+										var xhr = new XMLHttpRequest();
+										xhr.open('GET', style.canvas_url);
+										xhr.responseType = 'arraybuffer';
+										xhr.onload = () => {
+											const localGUID = App.sendMessage(
+												'getOrCreateSubscribedStyleNodeId',
+												{
+													styleKey: style.key,
+													fileKey: style.file_key,
+													editingFileKey: App._state.editingFileKey,
+													versionHash: style.content_hash
+												},
+												new Uint8Array(xhr.response)
+											).args.localGUID.split(':');
+											updateProperties(this.id, {
+												inheritTextStyleID: { sessionID: localGUID[0], localID: localGUID[1] }
+											});
+										};
+										xhr.send();
+									} else {
+										const localGUID = style.node_id.split(':');
+										updateProperties(this.id, {
+											inheritTextStyleID: { sessionID: localGUID[0], localID: localGUID[1] }
+										});
 									}
 								}
 							});
@@ -678,7 +761,11 @@ const getNode = node => {
 	if (newNode.children) {
 		newNode.getAllDescendents = () => getAllDescendents(newNode);
 	}
-	newNode.exportAsImageAsync = async scale => {
+	if (newNode.type !== 'Canvas')
+		newNode.resize = (width, height) => {
+			updateProperties(newNode.id, { width: width, height: height });
+		};
+	newNode.export = async settings => {
 		const selectedNodes = Object.keys(App._state.mirror.sceneGraphSelection);
 		if (selectedNodes.length !== 1 || (selectedNodes.length === 1 && newNode.id !== selectedNodes[0])) {
 			App.sendMessage('clearSelection');
@@ -688,14 +775,14 @@ const getNode = node => {
 		}
 		const nodeWithProperties = await newNode.getProperties();
 		const originalExportSettings = nodeWithProperties.exportSettings;
-		const newExportSettings = [
-			{
-				contentsOnly: true,
-				imageType: 'PNG',
-				constraint: { type: 'CONTENT_SCALE', value: scale || 1 },
-				suffix: ''
-			}
-		];
+		const newExportSettings = settings
+			? [settings]
+			: [
+					{
+						contentsOnly: true,
+						imageType: 'PNG'
+					}
+			  ];
 		if (originalExportSettings !== newExportSettings) nodeWithProperties.exportSettings = newExportSettings;
 		const buffer = await getBufferForSelectedNode();
 		nodeWithProperties.exportSettings = originalExportSettings;
@@ -718,34 +805,6 @@ const getAllDescendents = node => {
 	addToDescendents(node);
 	return descendents;
 };
-
-Object.defineProperties(scene, {
-	root: {
-		get() {
-			return getNode('0:0');
-		}
-	},
-	currentPage: {
-		get() {
-			return getNode(App._state.mirror.appModel.currentPage);
-		}
-	},
-	selection: {
-		get() {
-			return Object.keys(App._state.mirror.sceneGraphSelection).map(nodeId => getNode(nodeId));
-		},
-		set(selections) {
-			if (selections.length === 0) {
-				App.sendMessage('clearSelection');
-				return;
-			}
-			selections = typeof selections[0] === 'object' ? selections.map(selection => selection.id) : selections;
-			App.sendMessage('clearSelection');
-			App.sendMessage('addToSelection', { nodeIds: selections });
-			App.fromFullscreen._listenersByEvent.scrollToNode[0]({ nodeId: selections[0] });
-		}
-	}
-});
 
 const until = conditionFunction => {
 	const poll = resolve => {
@@ -785,9 +844,9 @@ const getBufferForSelectedNode = () => {
 			const reader = new FileReader();
 			reader.onload = () => {
 				resolve({
-					getBlob: blob,
-					getBytes: reader.result,
-					getUrl: oldCreateObjectURLFn(blob)
+					blob: blob,
+					buffer: reader.result,
+					url: oldCreateObjectURLFn(blob)
 				});
 				URL.createObjectURL = oldCreateObjectURLFn;
 			};

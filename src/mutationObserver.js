@@ -15,20 +15,20 @@ export function startMutationObserver() {
 			window.dispatchEvent(new CustomEvent('appLoaded'));
 		}
 
-		if (document.querySelector('div[class*="sidebar__REFRESH--navDefault-"]') && !fileBrowserLoaded) {
+		if (document.querySelector('div[class*="sidebar--navDefault-"]') && !fileBrowserLoaded) {
 			fileBrowserLoaded = true;
 			window.dispatchEvent(new CustomEvent('fileBrowserLoaded'));
 		}
 
 		if (
 			!document.getElementById('pluginManagerButton') &&
-			document.querySelector('div[class*="sidebar__REFRESH--navDefault-"]') &&
+			document.querySelector('div[class*="sidebar--navDefault-"]') &&
 			fileBrowserLoaded
 		) {
 			window.dispatchEvent(new CustomEvent('fileBrowserChanged'));
 		}
 
-		if (!document.querySelector('div[class*="sidebar__REFRESH--navDefault-"]') && fileBrowserLoaded) {
+		if (!document.querySelector('div[class*="sidebar--navDefault-"]') && fileBrowserLoaded) {
 			fileBrowserLoaded = false;
 			window.dispatchEvent(new CustomEvent('fileBrowserUnloaded'));
 		}

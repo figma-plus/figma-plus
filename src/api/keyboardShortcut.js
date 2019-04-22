@@ -1,16 +1,16 @@
-export const createKeyboardShortcut = (shortcut, triggerFunction, condition) => {
+export const registerKeyboardShortcut = (shortcut, action, condition) => {
 	if (document.getElementsByClassName('focus-target').length > 0) {
 		const focusTarget = document.getElementsByClassName('focus-target')[0];
-		addKeyboardShortcutInFile(focusTarget, shortcut, triggerFunction, condition);
+		addKeyboardShortcutInFile(focusTarget, shortcut, action, condition);
 	} else {
 		window.addEventListener('focusTargetFound', event => {
 			const focusTarget = event.detail;
-			addKeyboardShortcutInFile(focusTarget, shortcut, triggerFunction, condition);
+			addKeyboardShortcutInFile(focusTarget, shortcut, action, condition);
 		});
 	}
 };
 
-const addKeyboardShortcutInFile = (focusTarget, shortcut, triggerFunction, condition) => {
+const addKeyboardShortcutInFile = (focusTarget, shortcut, action, condition) => {
 	if (shortcut.mac && shortcut.windows) {
 		focusTarget.addEventListener('keydown', e => {
 			if (navigator.platform === 'MacIntel') {
@@ -23,7 +23,7 @@ const addKeyboardShortcutInFile = (focusTarget, shortcut, triggerFunction, condi
 					((typeof condition === 'function' && condition()) || typeof condition !== 'function')
 				) {
 					e.preventDefault();
-					triggerFunction();
+					action(e);
 				}
 			}
 			if (navigator.platform === 'Win32' || navigator.platform === 'Win64') {
@@ -35,7 +35,7 @@ const addKeyboardShortcutInFile = (focusTarget, shortcut, triggerFunction, condi
 					((typeof condition === 'function' && condition()) || typeof condition !== 'function')
 				) {
 					e.preventDefault();
-					triggerFunction();
+					action(e);
 				}
 			}
 		});

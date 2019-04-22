@@ -47,6 +47,10 @@
 		content: '\191';
 		font-size: 24px;
 	}
+	&.capitalize::after {
+		content: '\181';
+		font-size: 24px;
+	}
 	&.chevron-left::after {
 		content: '\178';
 		font-size: 24px;

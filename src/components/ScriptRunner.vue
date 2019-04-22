@@ -1,6 +1,7 @@
 <template lang="pug">
 .scriptRunner
-	textarea.code-editor(type='textarea' spellcheck='false' ref='code')
+	h3 Code
+	textarea.code-editor(type='textarea' spellcheck='false' ref='code' placeholder='Type code here...')
 	.buttons
 		a(@click='disableCode') Remove and disable code
 		button.primary(@click='runCode') Refresh and Run
@@ -10,10 +11,10 @@
 export default {
   mounted() {
     if (localStorage.getItem("figmaPlus-scriptRunnerCode") === null) {
-      this.$refs.code.value = `figmaPlus.createPluginsMenuItem(
-    'Hello world!',
-    () => figmaPlus.showToast('Hello world!')
-);`;
+      this.$refs.code.value = `figmaPlus.addCommand({
+	label: "Hello world!",
+	action: figmaPlus.showToast({message: 'Hello world!'})
+})`;
     } else {
       this.$refs.code.value = localStorage.getItem(
         "figmaPlus-scriptRunnerCode"
@@ -49,7 +50,8 @@ export default {
   .buttons {
     display: flex;
     flex-direction: row;
-    justify-content: flex-end;
+    justify-content: space-between;
+    padding: 0px 8px;
     a {
       margin-right: 12px;
     }

@@ -74,63 +74,12 @@ export default {
     users_installed_plugins: db.collection("users_installed_plugins"),
     users_count_limits: db.collection("users_count_limits")
   },
-  created() {
-    this.userHash = sha256()
-      .update(App._state.user.id)
-      .digest("hex");
-    firebase.auth().onAuthStateChanged(user => {
-      if (user) {
-        console.log("signed in", user.uid);
-        this.user = user;
-        db.collection("users_installed_plugins")
-          .doc(user.uid)
-          .get()
-          .then(doc => {
-            // this.updateInstalls(doc);
-          })
-          .catch(error => console.log);
-      } else {
-        console.log("not signed in, signing in");
-        firebase
-          .auth()
-          .signInWithEmailAndPassword(
-            this.userHash + "@figmaplus.com",
-            this.userHash
-          )
-          .catch(error => {
-            if (error.code === "auth/user-not-found") {
-              console.log("not user, signing up");
-              firebase
-                .auth()
-                .createUserWithEmailAndPassword(
-                  this.userHash + "@figmaplus.com",
-                  this.userHash
-                );
-            }
-          });
-      }
-    });
-
-    this.$bind("plugins_stats", db.collection("plugins_stats")).then(stats => {
-      this.pluginStats === stats;
-    });
-    this.$bind(
-      "users_installed_plugins",
-      db.collection("users_installed_plugins")
-    ).then(collection => {
-      this.users_installed_plugins === collection;
-    });
-    this.$bind("users_count_limits", db.collection("users_count_limits")).then(
-      collection => {
-        this.users_count_limits === collection;
-      }
-    );
-  },
   watch: {
     installedPlugins: array => {
       localStorage.setItem("figmaPlus-installedPlugins", JSON.stringify(array));
     }
   },
+  created() {},
   beforeMount() {
     figmaPlus.onFileBrowserLoaded(() => {
       if (this.modalOpened) this.hide();
@@ -145,13 +94,13 @@ export default {
 
     figmaPlus.onFileBrowserUnloaded(this.hide);
 
-    figmaPlus.createKeyboardShortcut(
-      {
+    figmaPlus.registerKeyboardShortcut({
+      shortcut: {
         mac: { shift: true, command: true, key: "P" },
         windows: { shift: true, control: true, key: "P" }
       },
-      this.show
-    );
+      action: this.show
+    });
 
     if (
       document.querySelector('[data-tooltip-text="Show notifications"]') &&
@@ -242,9 +191,10 @@ export default {
               plugin =>
                 !plugin.requiredTeamIds ||
                 plugin.requiredTeamIds.length === 0 ||
-                plugin.requiredTeamIds.some(id =>
+                (plugin.requiredTeamIds.some(id =>
                   this.myTeams.find(teamId => teamId === id)
-                )
+                ) &&
+                  plugin.requiredTeamIds.some(id => figmaPlus.getTeams()[id]))
             )
           : availablePlugins.filter(
               plugin =>
@@ -318,7 +268,10 @@ export default {
         notificationButton
       );
       pluginManagerButton.onclick = this.toggleModal;
-      figmaPlus.addTooltip(pluginManagerButton, "Figma Plus", true);
+      figmaPlus.addTooltip({
+        element: pluginManagerButton,
+        text: "Figma Plus"
+      });
     },
     loadPlugins(masterList) {
       const getManifest = async pluginEntry => {
@@ -373,13 +326,12 @@ export default {
 
         if (JSON.parse(localStorage.getItem("figmaPlus-hasNewPlugins"))) {
           figmaPlus.onAppLoaded(() => {
-            console.log("app loaded");
-            figmaPlus.showToast(
-              "A new plugin is available!",
-              10,
-              "View",
-              this.show
-            );
+            figmaPlus.showToast({
+              message: "A new plugin is available!",
+              timeoutInSeconds: 10,
+              buttonText: "View",
+              buttonAction: this.show
+            });
           });
         }
 
@@ -423,6 +375,58 @@ export default {
       }
     },
     show() {
+      this.userHash = sha256()
+        .update(App._state.user.id)
+        .digest("hex");
+      firebase.auth().onAuthStateChanged(user => {
+        if (user) {
+          this.user = user;
+          // this.$bind("plugins_stats", db.collection("plugins_stats")).then(
+          //   stats => {
+          //     this.pluginStats === stats;
+          //   }
+          // );
+          // this.$bind(
+          //   "users_installed_plugins",
+          //   db.collection("users_installed_plugins")
+          // ).then(collection => {
+          //   this.users_installed_plugins === collection;
+          // });
+          // this.$bind(
+          //   "users_count_limits",
+          //   db.collection("users_count_limits")
+          // ).then(collection => {
+          //   this.users_count_limits === collection;
+          // });
+          // db.collection("users_installed_plugins")
+          //   .doc(user.uid)
+          //   .get()
+          //   .then(doc => {
+          //     // this.updateInstalls(doc);
+          //   })
+          //   .catch(error => console.log);
+        } else {
+          console.log("not signed in, signing in");
+          firebase
+            .auth()
+            .signInWithEmailAndPassword(
+              this.userHash + "@figmaplus.com",
+              this.userHash
+            )
+            .catch(error => {
+              if (error.code === "auth/user-not-found") {
+                console.log("not user, signing up");
+                firebase
+                  .auth()
+                  .createUserWithEmailAndPassword(
+                    this.userHash + "@figmaplus.com",
+                    this.userHash
+                  );
+              }
+            });
+        }
+      });
+
       const currentOrgId = figmaPlus.getMyOrgId();
       this.myOrgId = currentOrgId;
       const myTeams = figmaPlus.getMyTeams().map(team => team.id);

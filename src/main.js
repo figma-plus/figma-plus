@@ -60,6 +60,7 @@ if (localServer && window.pluginDevMode) {
 	if (localServer.connected) {
 		localServer.cssFiles.forEach(css => {
 			const styles = document.createElement('link');
+			styles.className = 'localPlugin';
 			styles.rel = 'stylesheet';
 			styles.type = 'text/css';
 			styles.href = 'http://localhost:' + localServer.port + '/' + css + '?_=' + new Date().getTime();
@@ -70,6 +71,7 @@ if (localServer && window.pluginDevMode) {
 				.then(response => response.text())
 				.then(code => {
 					const script = document.createElement('script');
+					script.className = 'localPlugin';
 					const inlineScript = document.createTextNode(`(function () {${code}}())`);
 					script.appendChild(inlineScript);
 					document.head.appendChild(script);
@@ -86,20 +88,18 @@ if (scriptRunnerCode && window.pluginDevMode) {
 }
 
 if (!localStorage.getItem('figmaPlus-onboarded'))
-	figmaPlus.showUI(
-		'Welcome to Figma Plus',
-		modalElement => {
+	figmaPlus.showUI({
+		title: 'Welcome to Figma Plus',
+		callback: modalElement => {
 			new figmaPlus.Vue({
 				el: modalElement,
 				render: h => h(OnboardingModal)
 			});
 		},
-		400,
-		425,
-		null,
-		null,
-		true,
-		false
-	);
+		width: 400,
+		height: 425,
+		overlay: true,
+		paddings: false
+	});
 
 startMutationObserver();

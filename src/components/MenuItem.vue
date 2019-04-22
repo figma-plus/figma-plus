@@ -1,11 +1,11 @@
 <template lang="pug">
-	.plugin-dropdown-option(@click='runFunction' @mouseenter='showSubmenu' @mouseleave='hideSubmenu' ref='menuItem')
-		.plugin-dropdown-option-text {{ itemLabel }}
+	.plugin-dropdown-option(@click='runAction' @mouseenter='showSubmenu' @mouseleave='hideSubmenu' ref='menuItem')
+		.plugin-dropdown-option-text {{ label }}
 		.plugin-dropdown-option-shortcut(v-if='shortcut && !submenuItems') {{ getShortcutText(shortcut) }}
 		.plugin-dropdown-option-chevron(v-if='submenuItems')
 		.plugin-dropdown-submenu(v-if='submenuItems' ref='submenu')
-			.plugin-dropdown-option(v-for='submenuItem in submenuItems' :submenuItem='submenuItem' v-if='getConditionTrue(submenuItem.condition)' @click='submenuItem.triggerFunction')
-				.plugin-dropdown-option-text {{ submenuItem.itemLabel }}
+			.plugin-dropdown-option(v-for='submenuItem in submenuItems' :submenuItem='submenuItem' v-if='getConditionTrue(submenuItem.condition)' @click='runSubmenuItemAction($event, submenuItem.action)')
+				.plugin-dropdown-option-text {{ submenuItem.label }}
 				.plugin-dropdown-option-shortcut(v-if='submenuItem.shortcut') {{ getShortcutText(submenuItem.shortcut) }}
 </template>
 
@@ -16,8 +16,8 @@ export default {
   }),
   props: [
     "menuType",
-    "itemLabel",
-    "triggerFunction",
+    "label",
+    "action",
     "shortcut",
     "submenuItems",
     "isSubmenu"
@@ -35,8 +35,11 @@ export default {
     }
   },
   methods: {
-    runFunction() {
-      if (!this.submenuItems) this.triggerFunction();
+    runAction(e) {
+      if (!this.submenuItems) this.action(e);
+    },
+    runSubmenuItemAction(e, action) {
+      action(e);
     },
     getConditionTrue(condition) {
       if (typeof condition === "function") {

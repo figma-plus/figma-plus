@@ -6,14 +6,13 @@ Vue.use(VModal, { dynamic: true, injectModalsContainer: true });
 Vue.use(VueTabs);
 window.vueModal = new Vue();
 
-export const showUI = (modalTitle, callback, width, height, positionX, positionY, overlay, includePadding, tabs) => {
+export const showUI = (title, callback, width, height, positionX, positionY, overlay, paddings, tabs) => {
 	width = width ? width : 300;
 	height = height ? height : 'auto';
 	if (height !== 'auto') height = height >= window.innerHeight - 40 ? window.innerHeight : height + 40;
 	positionX = positionX ? positionX : 0.5;
 	positionY = positionY ? positionY : 0.5;
-	includePadding = !(includePadding === false);
-	vueModal.$modal.hide(modalTitle);
+	vueModal.$modal.hide(title);
 	vueModal.$modal.show(
 		{
 			props: tabs ? ['tabs'] : [],
@@ -21,7 +20,7 @@ export const showUI = (modalTitle, callback, width, height, positionX, positionY
 				? `
 					<div class='modal js-fullscreen-prevent-event-capture'>
 						<div class='modal-header'>
-							${modalTitle}
+							${title}
 							<div class='modal-close-button' @click="$emit('close')"></div>
 						</div>
 						<vue-tabs>
@@ -33,7 +32,7 @@ export const showUI = (modalTitle, callback, width, height, positionX, positionY
 				: `
 					<div class='modal js-fullscreen-prevent-event-capture'>
 						<div class='modal-header'>
-							${modalTitle}
+							${title}
 							<div class='modal-close-button' @click="$emit('close')"></div>
 						</div>
 						<div class='modal-content'>
@@ -46,7 +45,7 @@ export const showUI = (modalTitle, callback, width, height, positionX, positionY
 			tabs: tabs
 		},
 		{
-			name: modalTitle,
+			name: title,
 			draggable: overlay ? false : '.modal-header',
 			width: width >= window.innerWidth ? window.innerWidth : width,
 			height: height,
@@ -57,7 +56,7 @@ export const showUI = (modalTitle, callback, width, height, positionX, positionY
 		},
 		{
 			opened: e => {
-				if (!includePadding)
+				if (paddings === false)
 					[...document.getElementsByClassName('modal-content')].forEach(element => element.classList.add('no-padding'));
 				if (overlay) {
 					const overlay = document.getElementsByClassName('v--modal-overlay')[0];
@@ -76,15 +75,15 @@ export const showUI = (modalTitle, callback, width, height, positionX, positionY
 	);
 	if (document.querySelector('div[class*="nav-"]') === null) {
 		figmaPlus.onFileUnloaded(() => {
-			vueModal.$modal.hide(modalTitle);
+			vueModal.$modal.hide(title);
 		});
 	} else {
 		figmaPlus.onFileBrowserUnloaded(() => {
-			vueModal.$modal.hide(modalTitle);
+			vueModal.$modal.hide(title);
 		});
 	}
 };
 
-export const hideUI = modalTitle => {
-	vueModal.$modal.hide(modalTitle);
+export const hideUI = title => {
+	vueModal.$modal.hide(title);
 };

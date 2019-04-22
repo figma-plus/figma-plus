@@ -1,7 +1,7 @@
 import MenuItem from '../components/MenuItem.vue';
 import selectionPluginsMenu from '../components/SelectionPluginsMenu.vue';
 
-export const addMenuItem = (menuType, itemLabel, triggerFunction, condition, shortcut, submenuItems) => {
+export const addMenuItem = (menuType, label, action, condition, shortcut, submenuItems) => {
 	figmaPlus.onMenuOpened((type, hasMoreOptions) => {
 		if (type === 'DROPDOWN_TYPE_SELECTION_CONTEXT_MENU' || type === 'DROPDOWN_TYPE_OBJECTS_PANEL_CONTEXT_MENU') {
 			if (!document.getElementById('selectionPluginsMenuItem')) {
@@ -32,15 +32,15 @@ export const addMenuItem = (menuType, itemLabel, triggerFunction, condition, sho
 			}
 		}
 		if (type === menuType && !(typeof condition === 'function' && !condition()) && !hasMoreOptions)
-			injectMenuItem(menuType, false, itemLabel, triggerFunction, shortcut, submenuItems);
+			injectMenuItem(menuType, false, label, action, shortcut, submenuItems);
 	});
 	figmaPlus.onSubmenuOpened((type, highlightedOption) => {
 		if (type === menuType && !(typeof condition === 'function' && !condition()) && highlightedOption === 'More')
-			injectMenuItem(menuType, true, itemLabel, triggerFunction, shortcut, submenuItems);
+			injectMenuItem(menuType, true, label, action, shortcut, submenuItems);
 	});
 };
 
-export const injectMenuItem = (menuType, isSubmenu, itemLabel, triggerFunction, shortcut, submenuItems) => {
+export const injectMenuItem = (menuType, isSubmenu, label, action, shortcut, submenuItems) => {
 	const isFatDropdown = menuType === 'FULLSCREEN_FILENAME_DROPDOWN' || menuType === 'file-actions-dropdown';
 	let menu = isSubmenu
 		? document.querySelector('div[class*="multilevel_dropdown__REFRESH--menu--"]')
@@ -55,15 +55,15 @@ export const injectMenuItem = (menuType, isSubmenu, itemLabel, triggerFunction, 
 		data: function() {
 			return {
 				menuType: menuType,
-				itemLabel: itemLabel,
-				triggerFunction: triggerFunction,
+				label: label,
+				action: action,
 				shortcut: shortcut,
 				submenuItems: submenuItems,
 				isSubmenu: isSubmenu
 			};
 		},
 		components: { MenuItem },
-		template: `<MenuItem :menuType='menuType' :itemLabel='itemLabel' :triggerFunction='triggerFunction' :shortcut='shortcut' :submenuItems='submenuItems' :isSubmenu='isSubmenu'></MenuItem>`
+		template: `<MenuItem :menuType='menuType' :label='label' :action='action' :shortcut='shortcut' :submenuItems='submenuItems' :isSubmenu='isSubmenu'></MenuItem>`
 	});
 	if (menuType === 'fullscreen-menu-dropdown') {
 		if (menu.style.borderBottom === '') {

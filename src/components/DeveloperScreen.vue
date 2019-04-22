@@ -11,7 +11,7 @@
 			.section
 				h2 Port
 				.description Set up a local http server at where your plugin files are located, then enter the port number of your server below.
-				input.port(type='text' v-model='port' @change='changePort')
+				input.port(type='text' v-model='port')
 			.section
 				h2 Javascript files
 				a
@@ -21,9 +21,9 @@
 					.url
 						.file-icon.js JS
 						.prefix http://localhost:{{port}}/
-						.path(v-if='editing !== "js" + index' @click.stop='editing = "js" + index') {{path}}
+						.path(v-if='editing !== "js" + index' @click.stop='startEditing("js" + index)') {{path}}
 						input.path-edit(type='text' spellcheck='false' placeholder="File path, e.g. js/app.js" ref='jsEdit' v-if='editing === "js" + index' @keyup.enter='editing = ""' @blur='changePath($event, "js", index)' @click.stop :value='path' @change='changePath($event, "js", index)')
-					a(@click='jsFiles.splice(index, 1)') Remove
+					a(@click='removeJSPath(index)') Remove
 			.section
 				h2 CSS files
 				a
@@ -33,9 +33,9 @@
 					.url
 						.file-icon.css CSS
 						.prefix http://localhost:{{port}}/
-						.path(v-if='editing !== "css" + index' @click.stop='editing = "css" + index') {{path}}
+						.path(v-if='editing !== "css" + index' @click.stop='startEditing("css" + index)') {{path}}
 						input.path-edit(type='text' spellcheck='false' placeholder="File path, e.g. css/app.css" ref='cssEdit' v-if='editing === "css" + index' @keyup.enter='editing = ""' @blur='changePath($event, "css", index)' @click.stop :value='path' @change='changePath($event, "css", index)')
-					a(@click='cssFiles.splice(index, 1)') Remove
+					a(@click='removeCSSPath(index)') Remove
 </template>
 
 <script>
@@ -100,16 +100,16 @@ export default {
   methods: {
     openScriptRunner() {
       figmaPlus.togglePluginManager();
-      figmaPlus.showUI(
-        "Run Script",
-        element => {
+      figmaPlus.showUI({
+        title: "Run Script",
+        callback: element => {
           new figmaPlus.Vue({
             el: element,
             render: h => h(ScriptRunner)
           });
         },
-        600
-      );
+        width: 600
+      });
     },
     updateLocalStorage() {
       const localServer = {};
@@ -122,38 +122,68 @@ export default {
         JSON.stringify(localServer)
       );
     },
-    showToast(message) {
-      figmaPlus.showToast(
-        message + " Refresh this tab to see changes.",
-        10,
-        "Refresh",
-        () => location.reload()
-      );
-    },
     connect() {
       this.connected = true;
-      this.showToast("Connected to development server.");
+      this.cssFiles.forEach(css => {
+        const styles = document.createElement("link");
+        styles.className = "localPlugin";
+        styles.rel = "stylesheet";
+        styles.type = "text/css";
+        styles.href =
+          "http://localhost:" +
+          this.port +
+          "/" +
+          css +
+          "?_=" +
+          new Date().getTime();
+        document.head.appendChild(styles);
+      });
+      this.jsFiles.forEach(js => {
+        fetch("http://localhost:" + this.port + "/" + js, { cache: "no-cache" })
+          .then(response => response.text())
+          .then(code => {
+            const script = document.createElement("script");
+            script.className = "localPlugin";
+            const inlineScript = document.createTextNode(
+              `(function () {${code}}())`
+            );
+            script.appendChild(inlineScript);
+            document.head.appendChild(script);
+          });
+      });
+      figmaPlus.showToast({ message: "Connected to development server." });
     },
     disconnect() {
       this.connected = false;
-      this.showToast("Development server disconnected.");
+      for (let script of document.getElementsByClassName("localPlugin")) {
+        script.remove();
+      }
+      figmaPlus.showToast({ message: "Development server disconnected." });
     },
     addPath(type) {
-      const files = type === "js" ? this.jsFiles : this.cssFiles;
-      console.log(files);
-      files.push("");
-      setTimeout(() => {
-        this.editing = type + (files.length - 1);
-      }, 10);
-      setTimeout(() => {
-        type === "js"
-          ? this.$refs.jsEdit[0].focus()
-          : this.$refs.cssEdit[0].focus();
-      }, 20);
-      if (this.connected) this.showToast("Server settings updated.");
+      if (!this.connected) {
+        const files = type === "js" ? this.jsFiles : this.cssFiles;
+        console.log(files);
+        files.push("");
+        setTimeout(() => {
+          this.editing = type + (files.length - 1);
+        }, 10);
+        setTimeout(() => {
+          type === "js"
+            ? this.$refs.jsEdit[0].focus()
+            : this.$refs.cssEdit[0].focus();
+        }, 20);
+      } else
+        figmaPlus.showToast({
+          message: "Please disconnect server to edit settings"
+        });
     },
-    changePort() {
-      if (this.connected) showToast("Server settings updated.");
+    startEditing(field) {
+      if (!this.connected) this.editing = field;
+      else
+        figmaPlus.showToast({
+          message: "Please disconnect server to edit settings"
+        });
     },
     changePath(event, type, index) {
       let val = event.target.value;
@@ -166,7 +196,20 @@ export default {
         this.cssFiles[index] = val;
       }
       this.editing = "";
-      if (this.connected) this.showToast("Server settings updated.");
+    },
+    removeJSPath(index) {
+      if (!this.connected) this.jsFiles.splice(index, 1);
+      else
+        figmaPlus.showToast({
+          message: "Please disconnect server to edit settings"
+        });
+    },
+    removeCSSPath(index) {
+      if (!this.connected) this.cssFiles.splice(index, 1);
+      else
+        figmaPlus.showToast({
+          message: "Please disconnect server to edit settings"
+        });
     }
   }
 };
