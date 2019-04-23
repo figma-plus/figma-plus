@@ -17,7 +17,7 @@ export const showUI = (
 	positionX,
 	positionY,
 	overlay,
-	paddings,
+	padding,
 	tabs
 ) => {
 	title = title ? title : 'My Plugin';
@@ -70,7 +70,7 @@ export const showUI = (
 		},
 		{
 			opened: e => {
-				if (paddings === false)
+				if (padding === false)
 					[...document.getElementsByClassName('modal-content')].forEach(element => element.classList.add('no-padding'));
 				if (overlay) {
 					const overlay = document.getElementsByClassName('v--modal-overlay')[0];
@@ -88,6 +88,10 @@ export const showUI = (
 						if (tab.html) {
 							const UI = document.createElement('div');
 							UI.innerHTML = tab.html;
+							tabContent.parentNode.replaceChild(UI, tabContent);
+						} else if (!tab.reactComponent && !tab.vueComponent) {
+							const UI = document.createElement('div');
+							UI.innerHTML = `<div></div>`;
 							tabContent.parentNode.replaceChild(UI, tabContent);
 						}
 						if (tab.reactComponent) {
@@ -107,6 +111,10 @@ export const showUI = (
 					if (html) {
 						const UI = document.createElement('div');
 						UI.innerHTML = html;
+						modalContent.parentNode.replaceChild(UI, modalContent);
+					} else if (!reactComponent && !vueComponent) {
+						const UI = document.createElement('div');
+						UI.innerHTML = `<div></div>`;
 						modalContent.parentNode.replaceChild(UI, modalContent);
 					}
 					if (reactComponent) {

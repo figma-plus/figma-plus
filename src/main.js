@@ -97,7 +97,7 @@ if (!localStorage.getItem('figmaPlus-onboarded')) {
 			width: 400,
 			height: 425,
 			overlay: true,
-			paddings: false
+			padding: false
 		});
 	});
 }

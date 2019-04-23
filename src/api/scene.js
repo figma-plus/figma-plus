@@ -783,7 +783,7 @@ export const getNode = node => {
 						imageType: 'PNG'
 					}
 			  ];
-		if (originalExportSettings !== newExportSettings) nodeWithProperties.exportSettings = newExportSettings;
+		if (originalExportSettings[0] !== newExportSettings) nodeWithProperties.exportSettings = newExportSettings;
 		const buffer = await getBufferForSelectedNode();
 		nodeWithProperties.exportSettings = originalExportSettings;
 		return buffer;

@@ -39,7 +39,7 @@ export default {
       if (!this.submenuItems) this.action(e);
     },
     runSubmenuItemAction(e, action) {
-      action(e);
+      if (action) action(e);
     },
     getConditionTrue(condition) {
       if (typeof condition === "function") {

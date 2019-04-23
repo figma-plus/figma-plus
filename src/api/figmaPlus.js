@@ -185,7 +185,7 @@ export const figmaPlus = {
 		positionX,
 		positionY,
 		overlay,
-		paddings,
+		padding,
 		tabs
 	}) => {
 		showUI(
@@ -199,7 +199,7 @@ export const figmaPlus = {
 			positionX,
 			positionY,
 			overlay,
-			paddings,
+			padding,
 			tabs
 		);
 	},

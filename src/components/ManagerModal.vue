@@ -179,7 +179,6 @@ export default {
               plugin.requiredOrgId === "" ||
               plugin.requiredOrgId === this.myOrgId
           );
-
       availablePlugins =
         this.myTeams && this.myTeams.length > 0
           ? availablePlugins.filter(
@@ -395,8 +394,7 @@ export default {
         }
       });
 
-      const currentOrgId = figmaPlus.myOrgId;
-      this.myOrgId = currentOrgId;
+      this.myOrgId = figmaPlus.myOrg;
       const myTeams = figmaPlus.myTeams.map(team => team.id);
       this.myTeams = myTeams;
       if (this.numberOfUpdates > 0) this.currentTab = "Installed";
