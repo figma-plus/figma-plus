@@ -32,6 +32,7 @@ if (installedPlugins) {
 			if (manifest.css) {
 				manifest.css.forEach(css => {
 					const styles = document.createElement('link');
+					styles.className = installedPlugin.id;
 					styles.rel = 'stylesheet';
 					styles.type = 'text/css';
 					styles.href = `https://cdn.jsdelivr.net/gh/${installedPlugin.userRepo}@${latestCommit}/${css}`;
@@ -44,6 +45,7 @@ if (installedPlugins) {
 						.then(response => response.text())
 						.then(code => {
 							const script = document.createElement('script');
+							script.className = installedPlugin.id;
 							const inlineScript = document.createTextNode(`(function () {${code}}())`);
 							script.appendChild(inlineScript);
 							document.head.appendChild(script);
@@ -91,12 +93,7 @@ if (!localStorage.getItem('figmaPlus-onboarded')) {
 	figmaPlus.onFileBrowserLoaded(() => {
 		figmaPlus.showUI({
 			title: 'Welcome to Figma Plus',
-			callback: modalElement => {
-				new figmaPlus.Vue({
-					el: modalElement,
-					render: h => h(OnboardingModal)
-				});
-			},
+			vueComponent: OnboardingModal,
 			width: 400,
 			height: 425,
 			overlay: true,

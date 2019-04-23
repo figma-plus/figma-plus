@@ -437,14 +437,41 @@ export default {
     },
     install(plugin) {
       this.installedPlugins.push(plugin);
-      figmaPlus.showToast(
-        figmaPlus.isDesktop
-          ? "Plugin installed. Refresh opened tabs to see changes."
-          : "Plugin installed. Refresh this page to see changes.",
-        10,
-        figmaPlus.isDesktop ? "Refresh this tab" : "Refresh",
-        () => location.reload()
-      );
+
+      if (plugin.css) {
+        plugin.css.forEach(css => {
+          const styles = document.createElement("link");
+          styles.className = plugin.id;
+          styles.rel = "stylesheet";
+          styles.type = "text/css";
+          styles.href = `https://cdn.jsdelivr.net/gh/${plugin.userRepo}@${
+            plugin.commit
+          }/${css}`;
+          document.head.appendChild(styles);
+        });
+      }
+      if (plugin.js) {
+        plugin.js.forEach(js => {
+          fetch(
+            `https://cdn.jsdelivr.net/gh/${plugin.userRepo}@${
+              plugin.commit
+            }/${js}`
+          )
+            .then(response => response.text())
+            .then(code => {
+              const script = document.createElement("script");
+              script.className = plugin.id;
+              const inlineScript = document.createTextNode(
+                `(function () {${code}}())`
+              );
+              script.appendChild(inlineScript);
+              document.head.appendChild(script);
+              figmaPlus.showToast({
+                message: `Installed ${plugin.name}`
+              });
+            });
+        });
+      }
 
       let userData = this.users_installed_plugins.find(
         user => user.id === this.userHash
@@ -469,14 +496,14 @@ export default {
       );
       this.detailScreenOn = false;
 
-      figmaPlus.showToast(
-        figmaPlus.isDesktop
-          ? "Plugin uninstalled. Refresh opened tabs to see changes."
-          : "Plugin uninstalled. Refresh this page to see changes.",
-        10,
-        figmaPlus.isDesktop ? "Refresh this tab" : "Refresh",
-        () => location.reload()
-      );
+      figmaPlus.showToast({
+        message: figmaPlus.isDesktop
+          ? `${plugin.name} uninstalled. Refresh opened tabs to see changes.`
+          : `${plugin.name} uninstalled. Refresh this page to see changes.`,
+        timeoutInSeconds: 10,
+        buttonText: figmaPlus.isDesktop ? "Refresh this tab" : "Refresh",
+        buttonAction: () => location.reload()
+      });
 
       let userData = this.users_installed_plugins.find(
         user => user.id === this.userHash

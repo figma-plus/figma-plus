@@ -174,8 +174,34 @@ export const figmaPlus = {
 			: null;
 		window.App._dispatch(toast);
 	},
-	showUI: ({ title, callback, width, height, positionX, positionY, overlay, paddings, tabs }) => {
-		showUI(title, callback, width, height, positionX, positionY, overlay, paddings, tabs);
+	showUI: ({
+		title,
+		html,
+		onMount,
+		reactComponent,
+		vueComponent,
+		width,
+		height,
+		positionX,
+		positionY,
+		overlay,
+		paddings,
+		tabs
+	}) => {
+		showUI(
+			title,
+			html,
+			onMount,
+			reactComponent,
+			vueComponent,
+			width,
+			height,
+			positionX,
+			positionY,
+			overlay,
+			paddings,
+			tabs
+		);
 	},
 	hideUI: title => {
 		hideUI(title);

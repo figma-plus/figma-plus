@@ -102,12 +102,7 @@ export default {
       figmaPlus.togglePluginManager();
       figmaPlus.showUI({
         title: "Run Script",
-        callback: element => {
-          new figmaPlus.Vue({
-            el: element,
-            render: h => h(ScriptRunner)
-          });
-        },
+        vueComponent: ScriptRunner,
         width: 600
       });
     },

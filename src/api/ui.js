@@ -6,7 +6,21 @@ Vue.use(VModal, { dynamic: true, injectModalsContainer: true });
 Vue.use(VueTabs);
 window.vueModal = new Vue();
 
-export const showUI = (title, callback, width, height, positionX, positionY, overlay, paddings, tabs) => {
+export const showUI = (
+	title,
+	html,
+	onMount,
+	reactComponent,
+	vueComponent,
+	width,
+	height,
+	positionX,
+	positionY,
+	overlay,
+	paddings,
+	tabs
+) => {
+	title = title ? title : 'My Plugin';
 	width = width ? width : 300;
 	height = height ? height : 'auto';
 	if (height !== 'auto') height = height >= window.innerHeight - 40 ? window.innerHeight : height + 40;
@@ -15,7 +29,7 @@ export const showUI = (title, callback, width, height, positionX, positionY, ove
 	vueModal.$modal.hide(title);
 	vueModal.$modal.show(
 		{
-			props: tabs ? ['tabs'] : [],
+			props: ['tabs'],
 			template: tabs
 				? `
 					<div class='modal js-fullscreen-prevent-event-capture'>
@@ -42,7 +56,7 @@ export const showUI = (title, callback, width, height, positionX, positionY, ove
 			`
 		},
 		{
-			tabs: tabs
+			tabs: tabs ? tabs.map((tab, index) => (tab.title ? tab.title : `Tab ${index + 1}`)) : []
 		},
 		{
 			name: title,
@@ -64,12 +78,49 @@ export const showUI = (title, callback, width, height, positionX, positionY, ove
 					overlay.style.setProperty('height', '100%', 'important');
 				}
 				if (tabs) {
-					const args = tabs.map(tab => {
+					const tabContents = tabs.map(tab => {
 						const index = tabs.indexOf(tab);
 						return e.ref.firstChild.children[1].children[1].children[index].firstChild;
 					});
-					callback.apply(this, args);
-				} else callback(e.ref.firstChild.children[1].firstChild);
+					for (const [index, tab] of tabs.entries()) {
+						const tabContent = tabContents[index];
+						const parentNode = tabContent.parentNode;
+						if (tab.html) {
+							const UI = document.createElement('div');
+							UI.innerHTML = tab.html;
+							tabContent.parentNode.replaceChild(UI, tabContent);
+						}
+						if (tab.reactComponent) {
+							figmaPlus.ReactDOM.render(figmaPlus.React.createElement(tab.reactComponent), tabContent);
+						}
+						if (tab.vueComponent) {
+							new figmaPlus.Vue({
+								el: tabContent,
+								render: h => h(tab.vueComponent)
+							});
+						}
+						if (tab.onMount) tab.onMount(parentNode.firstChild);
+					}
+				} else {
+					const modalContent = e.ref.firstChild.children[1].firstChild;
+					const parentNode = modalContent.parentNode;
+					if (html) {
+						const UI = document.createElement('div');
+						UI.innerHTML = html;
+						modalContent.parentNode.replaceChild(UI, modalContent);
+					}
+					if (reactComponent) {
+						figmaPlus.ReactDOM.render(figmaPlus.React.createElement(reactComponent), modalContent);
+					}
+					if (vueComponent) {
+						new figmaPlus.Vue({
+							el: modalContent,
+							render: h => h(vueComponent)
+						});
+					}
+
+					if (onMount) onMount(parentNode.firstChild);
+				}
 			}
 		}
 	);
