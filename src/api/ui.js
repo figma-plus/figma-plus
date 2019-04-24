@@ -18,6 +18,7 @@ export const showUI = (
 	positionY,
 	overlay,
 	padding,
+	useFigmaStyles,
 	tabs
 ) => {
 	title = title ? title : 'My Plugin';
@@ -103,6 +104,7 @@ export const showUI = (
 								render: h => h(tab.vueComponent)
 							});
 						}
+						if (useFigmaStyles === false) parentNode.classList.remove('modal-content');
 						if (tab.onMount) tab.onMount(parentNode.firstChild);
 					}
 				} else {
@@ -126,7 +128,7 @@ export const showUI = (
 							render: h => h(vueComponent)
 						});
 					}
-
+					if (useFigmaStyles === false) parentNode.classList.remove('modal-content');
 					if (onMount) onMount(parentNode.firstChild);
 				}
 			}
