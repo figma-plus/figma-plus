@@ -82,13 +82,6 @@ if (localServer && window.pluginDevMode) {
 	}
 }
 
-const scriptRunnerCode = localStorage.getItem('figmaPlus-scriptRunnerCode');
-if (scriptRunnerCode && window.pluginDevMode) {
-	const script = document.createElement('script');
-	script.innerText = `(function () {${scriptRunnerCode}}())`;
-	document.head.appendChild(script);
-}
-
 if (!localStorage.getItem('figmaPlus-onboarded')) {
 	figmaPlus.onFileBrowserLoaded(() => {
 		figmaPlus.showUI({

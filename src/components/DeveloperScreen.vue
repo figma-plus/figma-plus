@@ -1,9 +1,6 @@
 <template lang="pug">
 	.developer-screen(@click='editing = ""')
 		.header
-			h1 Script Runner
-			button(@click='openScriptRunner') Open
-		.header.no-divider
 			h1 Development Server
 			button.primary(v-show='!connected' @click.stop='connect') Connect
 			button(v-show='connected' @click.stop='disconnect') Disconnect
@@ -39,8 +36,6 @@
 </template>
 
 <script>
-import ScriptRunner from "./ScriptRunner.vue";
-
 export default {
   data: () => ({
     connected: false,
@@ -98,14 +93,6 @@ export default {
     }
   },
   methods: {
-    openScriptRunner() {
-      figmaPlus.togglePluginManager();
-      figmaPlus.showUI({
-        title: "Run Script",
-        vueComponent: ScriptRunner,
-        width: 600
-      });
-    },
     updateLocalStorage() {
       const localServer = {};
       localServer.connected = this.connected;
@@ -219,14 +206,10 @@ export default {
   overflow-y: auto;
   .header {
     height: 48px;
-    border-bottom: 1px solid #d4d4d4;
     display: flex;
     align-items: center;
     padding-left: 24px;
     padding-right: 16px;
-    &.no-divider {
-      border-bottom: none;
-    }
     button {
       margin-left: auto;
     }
@@ -242,13 +225,15 @@ export default {
     .title {
       margin-bottom: 12px;
     }
+    .description {
+      margin-bottom: 12px;
+    }
     &.no-margin-bottom {
       margin-bottom: 0;
     }
   }
   .port {
     width: 60px;
-    margin-top: 12px;
   }
 }
 

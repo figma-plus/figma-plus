@@ -6,15 +6,26 @@
 			#pluginOptions
 			.plugin-dropdown-option(@click='openManager')
 				.plugin-dropdown-option-text Get Plugins
-				.plugin-dropdown-option-shortcut {{ shortcut }}
+				.plugin-dropdown-option-shortcut {{ managerShortcut }}
+			.plugin-dropdown-option(v-if='devMode' @click='openScriptRunner')
+				.plugin-dropdown-option-text Run Script
+				.plugin-dropdown-option-shortcut {{ scriptRunnerShortcut }}
 			a.plugin-dropdown-option(target="_blank" href='https://github.com/figma-plus/figma-plus/issues/new' )
 				.plugin-dropdown-option-text Report Issues
 </template>
 
 <script>
+import ScriptRunner from "./ScriptRunner.vue";
+
 export default {
   data: () => ({
-    shortcut: navigator.platform.includes("Win") ? "Ctrl+Shift+P" : "⇧⌘P",
+    devMode: window.pluginDevMode,
+    managerShortcut: navigator.platform.includes("Win")
+      ? "Ctrl+Shift+P"
+      : "⇧⌘P",
+    scriptRunnerShortcut: navigator.platform.includes("Win")
+      ? "Ctrl+Shift+R"
+      : "⇧⌘R",
     menuShown: false
   }),
   mounted() {
@@ -27,6 +38,13 @@ export default {
     );
   },
   methods: {
+    openScriptRunner() {
+      figmaPlus.showUI({
+        title: "Run Script",
+        vueComponent: ScriptRunner,
+        width: 500
+      });
+    },
     openManager() {
       window.figmaPlus.togglePluginManager();
     },

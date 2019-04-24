@@ -131,6 +131,8 @@ body {
 			&:focus {
 				border: none;
 				box-shadow: none;
+				outline: none;
+				margin-left: 10px;
 			}
 		}
 	}
@@ -404,5 +406,8 @@ body {
 	&.active {
 		color: #333;
 		font-weight: 600;
+	}
+	&:hover {
+		color: #333;
 	}
 }

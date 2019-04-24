@@ -52,7 +52,7 @@ export default {
       const menuItemBounds = menuItem.getBoundingClientRect();
       const submenuBounds = submenu.getBoundingClientRect();
       submenu.style.bottom = "";
-      submenu.style.top = `${menuItemBounds.top - 6}px`;
+      submenu.style.top = `${menuItemBounds.top - 8}px`;
       submenu.style.left = `${menuItemBounds.right}px`;
       this.menuShown = true;
       if (window.innerHeight - submenuBounds.bottom < 0) {

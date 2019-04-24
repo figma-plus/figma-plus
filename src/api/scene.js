@@ -761,7 +761,7 @@ export const getNode = node => {
 	if (newNode.children) {
 		newNode.getAllDescendents = () => getAllDescendents(newNode);
 	}
-	if (newNode.type !== 'Canvas')
+	if (newNode.type !== 'CANVAS')
 		newNode.resize = (width, height) => {
 			updateProperties(newNode.id, { width: width, height: height });
 		};

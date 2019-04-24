@@ -29,6 +29,7 @@ import PluginItem from "./PluginItem";
 import DetailScreen from "./DetailScreen";
 import DeveloperScreen from "./DeveloperScreen";
 import PluginsMenu from "./PluginsMenu.vue";
+import ScriptRunner from "./ScriptRunner.vue";
 import sha256 from "hash.js/lib/hash/sha/256";
 import firebase from "firebase/app";
 import "firebase/firestore";
@@ -96,6 +97,20 @@ export default {
       },
       action: this.show
     });
+
+    if (this.devMode)
+      figmaPlus.registerKeyboardShortcut({
+        shortcut: {
+          mac: { shift: true, command: true, key: "R" },
+          windows: { shift: true, control: true, key: "R" }
+        },
+        action: () =>
+          figmaPlus.showUI({
+            title: "Run Script",
+            vueComponent: ScriptRunner,
+            width: 500
+          })
+      });
 
     if (
       document.querySelector('[data-tooltip-text="Show notifications"]') &&
