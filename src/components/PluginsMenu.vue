@@ -30,9 +30,7 @@ export default {
   }),
   mounted() {
     [
-      ...document.querySelectorAll(
-        'div[class*="multilevel_dropdown__REFRESH--option"]'
-      )
+      ...document.querySelectorAll('div[class*="multilevel_dropdown--option"]')
     ].forEach(node =>
       node.addEventListener("mouseover", () => (this.menuShown = false))
     );
@@ -50,7 +48,7 @@ export default {
     },
     showSubmenu() {
       const activeNode = document.querySelector(
-        'div[class*="multilevel_dropdown__REFRESH--optionActive"]'
+        'div[class*="multilevel_dropdown--optionActive"]'
       );
       if (activeNode) {
         const activeClassName = [...activeNode.classList].find(className =>
@@ -58,7 +56,7 @@ export default {
         );
         activeNode.classList.remove(activeClassName);
         const realSubmenu = document.querySelector(
-          'div[class*="multilevel_dropdown__REFRESH--submenu"]'
+          'div[class*="multilevel_dropdown--submenu"]'
         );
         if (realSubmenu) realSubmenu.style.display = "none";
         activeNode.onmouseenter = () => {

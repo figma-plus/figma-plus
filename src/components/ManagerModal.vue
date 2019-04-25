@@ -124,7 +124,7 @@ export default {
       if (type === "fullscreen-menu-dropdown") {
         const integrations = [
           ...document.querySelectorAll(
-            'div[class*="multilevel_dropdown__REFRESH--name"]'
+            'div[class*="multilevel_dropdown--name"]'
           )
         ].find(node => node.innerText === "Integrations").parentNode;
         const pluginsMenuItem = document.createElement("div");
@@ -340,8 +340,6 @@ export default {
             });
           });
         }
-
-        this.migrate();
       });
     },
     checkForUpdates() {
@@ -351,34 +349,15 @@ export default {
         );
         if (installedPlugin.version !== newPlugin.version) {
           figmaPlus.onAppLoaded(() => {
-            figmaPlus.showToast(
-              `${installedPlugin.name} plugin has been updated!`,
-              10,
-              "What's new",
-              this.show
-            );
+            figmaPlus.showToast({
+              message: `${installedPlugin.name} plugin has been updated!`,
+              timeoutInSeconds: 10,
+              buttonText: "What's new",
+              buttonAction: this.show
+            });
           });
         }
       });
-    },
-    migrate() {
-      if (localStorage.getItem("installedPlugins")) {
-        const oldInstalledPlugins = JSON.parse(
-          localStorage.getItem("installedPlugins")
-        );
-        oldInstalledPlugins.forEach(installedPlugin => {
-          this.install(
-            this.plugins.find(plugin => plugin.id === installedPlugin.id)
-          );
-        });
-        localStorage.removeItem("installedPlugins");
-        figmaPlus.showToast(
-          "Plugins updated, please restart Figma.",
-          10,
-          "Refresh",
-          () => location.reload()
-        );
-      }
     },
     show() {
       this.userHash = sha256()

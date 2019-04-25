@@ -6,10 +6,10 @@ export const addMenuItem = (menuType, label, action, condition, shortcut, submen
 		if (type === 'DROPDOWN_TYPE_SELECTION_CONTEXT_MENU' || type === 'DROPDOWN_TYPE_OBJECTS_PANEL_CONTEXT_MENU') {
 			if (!document.getElementById('selectionPluginsMenuItem')) {
 				const selectionPluginsMenuItem = document.createElement('div');
-				const extensions = [...document.querySelectorAll('div[class*="multilevel_dropdown__REFRESH--option"]')].find(
+				const extensions = [...document.querySelectorAll('div[class*="multilevel_dropdown--option"]')].find(
 					node => node.firstChild.innerText === 'Extensions'
 				);
-				const show = [...document.querySelectorAll('div[class*="multilevel_dropdown__REFRESH--option"]')].find(
+				const show = [...document.querySelectorAll('div[class*="multilevel_dropdown--option"]')].find(
 					node => node.firstChild.innerText === 'Show/Hide'
 				);
 				const menu = show.parentNode;
@@ -17,7 +17,7 @@ export const addMenuItem = (menuType, label, action, condition, shortcut, submen
 					menu.insertBefore(selectionPluginsMenuItem, extensions.nextSibling);
 				} else {
 					const separator = document.createElement('div');
-					separator.className = 'dropdown__REFRESH--separator--11K1o';
+					separator.className = 'dropdown--separator--11K1o';
 					menu.insertBefore(selectionPluginsMenuItem, show);
 					menu.insertBefore(separator, show);
 				}
@@ -43,8 +43,8 @@ export const addMenuItem = (menuType, label, action, condition, shortcut, submen
 export const injectMenuItem = (menuType, isSubmenu, label, action, shortcut, submenuItems) => {
 	const isFatDropdown = menuType === 'FULLSCREEN_FILENAME_DROPDOWN' || menuType === 'file-actions-dropdown';
 	let menu = isSubmenu
-		? document.querySelector('div[class*="multilevel_dropdown__REFRESH--menu--"]')
-		: document.querySelector('div[class*="dropdown__REFRESH--dropdown--"]');
+		? document.querySelector('div[class*="multilevel_dropdown--menu--"]')
+		: document.querySelector('div[class*="dropdown--dropdown--"]');
 	if (menuType === 'fullscreen-menu-dropdown') menu = document.getElementById('pluginOptions');
 	if (menuType === 'DROPDOWN_TYPE_SELECTION_CONTEXT_MENU' || menuType === 'DROPDOWN_TYPE_OBJECTS_PANEL_CONTEXT_MENU')
 		menu = document.getElementById('selectionPluginOptions');

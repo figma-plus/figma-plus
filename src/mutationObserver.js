@@ -64,7 +64,7 @@ export function startMutationObserver() {
 					detail: {
 						type: window.App._state.dropdownShown.type,
 						hasMoreOptions:
-							[...document.querySelectorAll('div[class*="multilevel_dropdown__REFRESH--name"]')].find(
+							[...document.querySelectorAll('div[class*="multilevel_dropdown--name"]')].find(
 								node => node.innerText === 'More'
 							) !== undefined
 					}
@@ -75,21 +75,21 @@ export function startMutationObserver() {
 		if (
 			window.App._state.dropdownShown &&
 			menuOpened &&
-			document.querySelector('div[class*="multilevel_dropdown__REFRESH--menu"]') &&
-			document.querySelectorAll('div[class*="multilevel_dropdown__REFRESH--menu"]').length > numberOfSubmenus
+			document.querySelector('div[class*="multilevel_dropdown--menu"]') &&
+			document.querySelectorAll('div[class*="multilevel_dropdown--menu"]').length > numberOfSubmenus
 		) {
 			window.dispatchEvent(
 				new CustomEvent('submenuOpened', {
 					detail: {
 						type: window.App._state.dropdownShown.type,
-						highlightedOption: document.querySelectorAll('div[class*="multilevel_dropdown__REFRESH--optionActive"]')[
-							document.querySelectorAll('div[class*="multilevel_dropdown__REFRESH--menu"]').length - 1
+						highlightedOption: document.querySelectorAll('div[class*="multilevel_dropdown--optionActive"]')[
+							document.querySelectorAll('div[class*="multilevel_dropdown--menu"]').length - 1
 						].textContent
 					}
 				})
 			);
 		}
-		numberOfSubmenus = document.querySelectorAll('div[class*="multilevel_dropdown__REFRESH--menu"]').length;
+		numberOfSubmenus = document.querySelectorAll('div[class*="multilevel_dropdown--menu"]').length;
 
 		if (!window.App._state.dropdownShown && menuOpened) {
 			menuOpened = false;

@@ -75,10 +75,10 @@ export default {
     showSubmenu() {
       const activeNode = this.isSubmenu
         ? document.querySelectorAll(
-            'div[class*="multilevel_dropdown__REFRESH--optionActive"]'
+            'div[class*="multilevel_dropdown--optionActive"]'
           )[1]
         : document.querySelector(
-            'div[class*="multilevel_dropdown__REFRESH--optionActive"]'
+            'div[class*="multilevel_dropdown--optionActive"]'
           );
       if (activeNode) {
         const activeClassName = [...activeNode.classList].find(className =>
@@ -86,7 +86,7 @@ export default {
         );
         activeNode.classList.remove(activeClassName);
         const realSubmenu = document.querySelector(
-          'div[class*="multilevel_dropdown__REFRESH--submenu--"]'
+          'div[class*="multilevel_dropdown--submenu--"]'
         );
         if (realSubmenu) realSubmenu.style.display = "none";
         activeNode.onmouseover = () => {
