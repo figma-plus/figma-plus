@@ -1,4 +1,5 @@
 @import './FigmaIcons';
+@import './PrismCodeEditor';
 
 * {
 	-webkit-font-smoothing: antialiased;
@@ -12,7 +13,8 @@ body {
 	outline: none;
 }
 
-.modal-content {
+.modal-content,
+.tab-content {
 	position: relative;
 	box-sizing: border-box;
 	padding: 16px 8px;

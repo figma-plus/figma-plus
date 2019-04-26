@@ -7,7 +7,9 @@
 
 Object.defineProperty(exports, '__esModule', { value: true });
 
-function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
+function _interopDefault(ex) {
+	return ex && typeof ex === 'object' && 'default' in ex ? ex['default'] : ex;
+}
 
 var _mergeJSXProps = _interopDefault(require('babel-helper-vue-jsx-merge-props'));
 
@@ -19,15 +21,15 @@ var VueTabs = {
 		disabledColor: String,
 		disabledTextColor: String,
 		/**
-   * Tab title position: center | bottom | top
-   */
+		 * Tab title position: center | bottom | top
+		 */
 		textPosition: {
 			type: String,
 			default: 'center'
 		},
 		/**
-   * Tab type: tabs | pills
-   */
+		 * Tab type: tabs | pills
+		 */
 		type: {
 			type: String,
 			default: 'tabs'
@@ -37,8 +39,8 @@ var VueTabs = {
 			default: 'horizontal'
 		},
 		/**
-   * Centers the tabs and makes the container div full width
-   */
+		 * Centers the tabs and makes the container div full width
+		 */
 		centered: Boolean,
 		value: [String, Number, Object]
 	},
@@ -108,14 +110,14 @@ var VueTabs = {
 		},
 		getTabs: function getTabs() {
 			if (this.$slots.default) {
-				return this.$slots.default.filter(function (comp) {
+				return this.$slots.default.filter(function(comp) {
 					return comp.componentOptions;
 				});
 			}
 			return [];
 		},
 		findTabAndActivate: function findTabAndActivate(tabNameOrIndex) {
-			var indexToActivate = this.tabs.findIndex(function (tab, index) {
+			var indexToActivate = this.tabs.findIndex(function(tab, index) {
 				return tab.title === tabNameOrIndex || index === tabNameOrIndex;
 			});
 			// if somehow activeTabIndex is not reflected in the actual vue-tab instance, set it.
@@ -135,24 +137,24 @@ var VueTabs = {
 			if (this.tabs.length === 0) return;
 			var tab = this.tabs[index];
 			var active = tab.active,
-			    title = tab.title;
+				title = tab.title;
 
 			var titleStyles = { color: this.activeTabColor };
 			if (position === 'center') titleStyles.color = this.activeTextColor;
-			var simpleTitle = h(
-				'span',
-				{ 'class': 'title title_' + position, style: active ? titleStyles : {} },
-				[position === 'center' && this.renderIcon(index), title]
-			);
+			var simpleTitle = h('span', { class: 'title title_' + position, style: active ? titleStyles : {} }, [
+				position === 'center' && this.renderIcon(index),
+				title
+			]);
 
 			if (tab.$slots.title) return tab.$slots.title;
-			if (tab.$scopedSlots.title) return tab.$scopedSlots.title({
-				active: active,
-				title: title,
-				position: position,
-				icon: tab.icon,
-				data: tab.tabData
-			});
+			if (tab.$scopedSlots.title)
+				return tab.$scopedSlots.title({
+					active: active,
+					title: title,
+					position: position,
+					icon: tab.icon,
+					data: tab.tabData
+				});
 			return simpleTitle;
 		},
 		renderIcon: function renderIcon(index) {
@@ -162,11 +164,7 @@ var VueTabs = {
 			var tab = this.tabs[index];
 			var icon = tab.icon;
 
-			var simpleIcon = h(
-				'i',
-				{ 'class': icon },
-				['\xA0']
-			);
+			var simpleIcon = h('i', { class: icon }, ['\xA0']);
 			if (!tab.$slots.title && icon) return simpleIcon;
 		},
 		tabStyles: function tabStyles(tab) {
@@ -183,42 +181,50 @@ var VueTabs = {
 
 			var h = this.$createElement;
 
-			return this.tabs.map(function (tab, index) {
+			return this.tabs.map(function(tab, index) {
 				if (!tab) return;
 				var route = tab.route,
-				    id = tab.id,
-				    title = tab.title,
-				    icon = tab.icon,
-				    tabId = tab.tabId;
+					id = tab.id,
+					title = tab.title,
+					icon = tab.icon,
+					tabId = tab.tabId;
 
 				var active = _this.activeTabIndex === index;
 				var leftOfActive = _this.activeTabIndex === index + 1;
 				return h(
 					'li',
-					_mergeJSXProps([{
-						attrs: {
-							name: 'tab',
+					_mergeJSXProps([
+						{
+							attrs: {
+								name: 'tab',
 
-							id: 't-' + tabId,
-							'aria-selected': active,
-							'aria-controls': 'p-' + tabId,
-							role: 'tab'
+								id: 't-' + tabId,
+								'aria-selected': active,
+								'aria-controls': 'p-' + tabId,
+								role: 'tab'
+							},
+
+							class: ['modal-tab', { active: active }, { disabled: tab.disabled }, { leftOfActive: leftOfActive }],
+							key: title
 						},
+						{
+							on: {
+								click: function click($event) {
+									for (
+										var _len = arguments.length, attrs = Array(_len > 1 ? _len - 1 : 0), _key = 1;
+										_key < _len;
+										_key++
+									) {
+										attrs[_key - 1] = arguments[_key];
+									}
 
-						'class': ['modal-tab', { active: active }, { disabled: tab.disabled }, { leftOfActive: leftOfActive }],
-						key: title }, {
-						on: {
-							'click': function click($event) {
-								for (var _len = arguments.length, attrs = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-									attrs[_key - 1] = arguments[_key];
+									(function() {
+										return !tab.disabled && _this.navigateToTab(index, route);
+									}.apply(undefined, [$event].concat(attrs)));
 								}
-
-								(function () {
-									return !tab.disabled && _this.navigateToTab(index, route);
-								}).apply(undefined, [$event].concat(attrs));
 							}
 						}
-					}]),
+					]),
 					[_this.textPosition === 'center' && _this.renderTabTitle(index, _this.textPosition)]
 				);
 			});
@@ -228,28 +234,14 @@ var VueTabs = {
 		var h = arguments[0];
 
 		var tabList = this.renderTabs();
-		return h(
-			'div',
-			{ 'class': ['vue-tabs', this.stackedClass] },
-			[h(
-				'div',
-				{ 'class': [{ 'nav-tabs-navigation': !this.isStacked }, { 'left-vertical-tabs': this.isStacked }] },
-				[h(
-					'div',
-					{ 'class': ['nav-tabs-wrapper', this.stackedClass] },
-					[h(
-						'ul',
-						{ 'class': this.classList, attrs: { role: 'tablist' }
-						},
-						[tabList]
-					)]
-				)]
-			), h(
-				'div',
-				{ 'class': ['tab-content', { 'right-text-tabs': this.isStacked }] },
-				[this.$slots.default]
-			)]
-		);
+		return h('div', { class: ['vue-tabs', this.stackedClass] }, [
+			h('div', { class: [{ 'nav-tabs-navigation': !this.isStacked }, { 'left-vertical-tabs': this.isStacked }] }, [
+				h('div', { class: ['nav-tabs-wrapper', this.stackedClass] }, [
+					h('ul', { class: this.classList, attrs: { role: 'tablist' } }, [tabList])
+				])
+			]),
+			h('div', { class: [{ 'right-text-tabs': this.isStacked }] }, [this.$slots.default])
+		]);
 	},
 
 	watch: {
@@ -286,9 +278,9 @@ var VTab = {
 			default: null
 		},
 		/***
-   * Function to execute before tab switch. Return value must be boolean
-   * If the return result is false, tab switch is restricted
-   */
+		 * Function to execute before tab switch. Return value must be boolean
+		 * If the return result is false, tab switch is restricted
+		 */
 		beforeChange: {
 			type: Function
 		},
@@ -332,15 +324,14 @@ var VTab = {
 		return h(
 			'section',
 			{
-				'class': 'modal-content',
-				attrs: { id: 'p-' + this.tabId,
-					'aria-labelledby': 't-' + this.tabId,
-					role: 'tabpanel'
-				},
-				directives: [{
-					name: 'show',
-					value: this.active
-				}]
+				class: 'tab-content',
+				attrs: { id: 'p-' + this.tabId, 'aria-labelledby': 't-' + this.tabId, role: 'tabpanel' },
+				directives: [
+					{
+						name: 'show',
+						value: this.active
+					}
+				]
 			},
 			[h('div', [this.$slots.default])]
 		);
@@ -348,15 +339,15 @@ var VTab = {
 };
 
 var VueTabsPlugin = {
-  install: function install(Vue) {
-    Vue.component('vue-tabs', VueTabs);
-    Vue.component('v-tab', VTab);
-  }
+	install: function install(Vue) {
+		Vue.component('vue-tabs', VueTabs);
+		Vue.component('v-tab', VTab);
+	}
 };
 // Automatic installation if Vue has been added to the global scope.
 if (typeof window !== 'undefined' && window.Vue) {
-  window.Vue.use(VueTabsPlugin);
-  window.VueTabs = VueTabsPlugin;
+	window.Vue.use(VueTabsPlugin);
+	window.VueTabs = VueTabsPlugin;
 }
 
 exports['default'] = VueTabsPlugin;

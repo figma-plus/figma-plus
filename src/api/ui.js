@@ -71,14 +71,14 @@ export const showUI = (
 		},
 		{
 			opened: e => {
-				if (padding === false)
-					[...document.getElementsByClassName('modal-content')].forEach(element => element.classList.add('no-padding'));
 				if (overlay) {
 					const overlay = document.getElementsByClassName('v--modal-overlay')[0];
 					overlay.style.setProperty('width', '100%', 'important');
 					overlay.style.setProperty('height', '100%', 'important');
 				}
 				if (tabs) {
+					if (padding === false)
+						[...document.getElementsByClassName('tab-content')].forEach(element => element.classList.add('no-padding'));
 					const tabContents = tabs.map(tab => {
 						const index = tabs.indexOf(tab);
 						return e.ref.firstChild.children[1].children[1].children[index].firstChild;
@@ -104,10 +104,14 @@ export const showUI = (
 								render: h => h(tab.vueComponent)
 							});
 						}
-						if (useFigmaStyles === false) parentNode.classList.remove('modal-content');
+						if (useFigmaStyles === false) parentNode.classList.remove('tab-content');
 						if (tab.onMount) tab.onMount(parentNode.firstChild);
 					}
 				} else {
+					if (padding === false)
+						[...document.getElementsByClassName('modal-content')].forEach(element =>
+							element.classList.add('no-padding')
+						);
 					const modalContent = e.ref.firstChild.children[1].firstChild;
 					const parentNode = modalContent.parentNode;
 					if (html) {
