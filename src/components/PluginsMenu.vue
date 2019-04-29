@@ -1,5 +1,5 @@
 <template lang="pug">
-	.plugin-dropdown-option.padded(ref='menuItem' @click.self="e => e.stopPropagation()" @mouseenter='showSubmenu')
+	.plugin-dropdown-option.padded(ref='menuItem' @click.self="e => e.stopPropagation()" @mousemove='showSubmenu')
 		.plugin-dropdown-option-text Figma Plus
 		.plugin-dropdown-option-chevron
 		.plugin-dropdown-submenu(ref='submenu' v-show='menuShown')

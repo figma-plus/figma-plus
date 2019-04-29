@@ -41,7 +41,6 @@ export const addMenuItem = (menuType, label, action, condition, shortcut, submen
 };
 
 export const injectMenuItem = (menuType, isSubmenu, label, action, shortcut, submenuItems) => {
-	const isFatDropdown = menuType === 'FULLSCREEN_FILENAME_DROPDOWN' || menuType === 'file-actions-dropdown';
 	let menu = isSubmenu
 		? document.querySelector('div[class*="multilevel_dropdown--menu--"]')
 		: document.querySelector('div[class*="dropdown--dropdown--"]');
@@ -73,8 +72,7 @@ export const injectMenuItem = (menuType, isSubmenu, label, action, shortcut, sub
 		}
 	}
 	const numberOfSeparators = [...menu.children].filter(node => node.className.includes('dropdown--separator')).length;
-	if (!isFatDropdown)
-		menu.style.top = isSubmenu
-			? `${parseInt(menu.style.top) - 24 - numberOfSeparators * 2}px`
-			: `${parseInt(menu.style.top) - 24}px`;
+	menu.style.top = isSubmenu
+		? `${parseInt(menu.style.top) - 24 - numberOfSeparators * 2}px`
+		: `${parseInt(menu.style.top) - 24}px`;
 };

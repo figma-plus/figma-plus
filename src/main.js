@@ -49,6 +49,9 @@ if (installedPlugins) {
 							const inlineScript = document.createTextNode(`(function () {${code}}())`);
 							script.appendChild(inlineScript);
 							document.head.appendChild(script);
+						})
+						.catch(error => {
+							console.log(error);
 						});
 				});
 			}
@@ -69,7 +72,12 @@ if (localServer && window.pluginDevMode) {
 			document.head.appendChild(styles);
 		});
 		localServer.jsFiles.forEach(js => {
-			fetch('http://localhost:' + localServer.port + '/' + js, { cache: 'no-cache' })
+			fetch(
+				figmaPlus.isDesktop
+					? 'http://localhost:' + localServer.port + '/' + js + '?_=' + new Date().getTime()
+					: 'http://localhost:' + localServer.port + '/' + js,
+				{ cache: 'no-cache' }
+			)
 				.then(response => response.text())
 				.then(code => {
 					const script = document.createElement('script');
@@ -77,6 +85,9 @@ if (localServer && window.pluginDevMode) {
 					const inlineScript = document.createTextNode(`(function () {${code}}())`);
 					script.appendChild(inlineScript);
 					document.head.appendChild(script);
+				})
+				.catch(error => {
+					console.log(error);
 				});
 		});
 	}

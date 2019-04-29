@@ -15,9 +15,78 @@ export const figmaPlus = {
 	getNodeById: nodeId => {
 		return getNode(nodeId);
 	},
+	styles: {
+		findAll: callback => {
+			const publishedStyles = Object.values(App._state.library.published.styles)
+				.map(org => Object.values(org))
+				.flat()
+				.map(team => Object.values(team))
+				.flat()
+				.map(style => {
+					const obj = {
+						id: style.key,
+						name: style.name,
+						type: style.style_type,
+						description: style.description,
+						canvas_url: style.canvas_url,
+						file_key: style.file_key
+					};
+					if (style.thumbnail_url) obj.thumbnail_url = style.thumbnail_url;
+					if (style.style_type === 'FILL' && style.meta) obj.fills = style.meta.style_thumbnail.fillPaints;
+					if (style.style_type === 'EFFECT' && style.meta) obj.effects = style.meta.style_thumbnail.effects;
+					if (style.style_type === 'GRID' && style.meta) obj.layoutGrids = style.meta.style_thumbnail.layoutGrids;
+					obj.remote = true;
+					return obj;
+				});
+			const allStyles = figmaPlus.styles.local.concat(publishedStyles);
+			callback = callback ? callback : () => true;
+			return allStyles.filter(callback);
+		},
+		findOne: callback => {
+			const publishedStyles = Object.values(App._state.library.published.styles)
+				.map(org => Object.values(org))
+				.flat()
+				.map(team => Object.values(team))
+				.flat()
+				.map(style => {
+					const obj = {
+						id: style.key,
+						name: style.name,
+						type: style.style_type,
+						description: style.description,
+						canvas_url: style.canvas_url,
+						file_key: style.file_key
+					};
+					if (style.thumbnail_url) obj.thumbnail_url = style.thumbnail_url;
+					if (style.style_type === 'FILL' && style.meta) obj.fills = style.meta.style_thumbnail.fillPaints;
+					if (style.style_type === 'EFFECT' && style.meta) obj.effects = style.meta.style_thumbnail.effects;
+					if (style.style_type === 'GRID' && style.meta) obj.layoutGrids = style.meta.style_thumbnail.layoutGrids;
+					obj.remote = true;
+					return obj;
+				});
+			const allStyles = figmaPlus.styles.local.concat(publishedStyles);
+			if (callback) return allStyles.find(callback) ? allStyles.find(callback) : null;
+			else return null;
+		}
+	},
+	comments: {
+		findAll: callback => {
+			const comments = Object.values(App._state.comments.commentsById);
+			callback = callback ? callback : () => true;
+			return comments.filter(callback);
+		},
+		findOne: callback => {
+			const comments = Object.values(App._state.comments.commentsById);
+			if (callback) return comments.find(callback) ? comments.find(callback) : null;
+			else return null;
+		}
+	},
 	getStyleById: styleId => {
 		const styles = figmaPlus.styles.local.concat(figmaPlus.styles.published);
 		return styles.find(style => style.id === styleId);
+	},
+	getCommentById: commentId => {
+		return figmaPlus.comments.findOne(comment => comment.id === commentId);
 	},
 	onFileBrowserLoaded: action => {
 		window.addEventListener('fileBrowserLoaded', () => {
@@ -315,46 +384,84 @@ Object.defineProperties(figmaPlus, {
 	}
 });
 
-Object.defineProperty(figmaPlus, 'styles', {
-	get() {
-		const obj = {};
-		Object.defineProperties(obj, {
-			local: {
-				get() {
-					return Object.values(App._state.library.local.styles).map(style => {
-						const obj = { id: style.key, name: style.name, type: style.style_type, description: style.description };
-						if (style.thumbnail_url) obj.thumbnailUrl = style.thumbnail_url;
-						if (style.style_type === 'FILL' && style.meta) obj.fills = style.meta.style_thumbnail.fillPaints;
-						if (style.style_type === 'EFFECT' && style.meta) obj.effects = style.meta.style_thumbnail.effects;
-						if (style.style_type === 'GRID' && style.meta) obj.layoutGrids = style.meta.style_thumbnail.layoutGrids;
-						return obj;
+Object.defineProperties(figmaPlus.styles, {
+	local: {
+		get() {
+			return Object.values(App._state.library.local.styles).map(style => {
+				const obj = { id: style.key, name: style.name, type: style.style_type, description: style.description };
+				if (style.thumbnail_url) obj.thumbnail_url = style.thumbnail_url;
+				if (style.style_type === 'FILL' && style.meta) obj.fills = style.meta.style_thumbnail.fillPaints;
+				if (style.style_type === 'EFFECT' && style.meta) obj.effects = style.meta.style_thumbnail.effects;
+				if (style.style_type === 'GRID' && style.meta) obj.layoutGrids = style.meta.style_thumbnail.layoutGrids;
+				obj.remote = false;
+				return obj;
+			});
+		}
+	},
+	libraries: {
+		get() {
+			const libraries = [];
+			Object.values(App._state.library.published.styles).forEach(team => {
+				for (let file in team) {
+					const fileObj = App._state.fileByKey[file];
+					const styles = Object.values(team[file]).map(style => {
+						return {
+							id: style.key,
+							name: style.name,
+							type: style.style_type,
+							description: style.description,
+							canvas_url: style.canvas_url,
+							file_key: style.file_key
+						};
 					});
+					const obj = { name: fileObj.name, key: file, styles: styles };
+					libraries.push(obj);
 				}
-			},
-			published: {
-				get() {
-					return Object.values(App._state.library.published.styles)
-						.map(org => Object.values(org))
-						.flat()
-						.map(team => Object.values(team))
-						.flat()
-						.map(style => {
-							const obj = {
-								id: style.key,
-								name: style.name,
-								type: style.style_type,
-								description: style.description,
-								canvasUrl: style.canvas_url
-							};
-							if (style.thumbnail_url) obj.thumbnailUrl = style.thumbnail_url;
-							if (style.style_type === 'FILL' && style.meta) obj.fills = style.meta.style_thumbnail.fillPaints;
-							if (style.style_type === 'EFFECT' && style.meta) obj.effects = style.meta.style_thumbnail.effects;
-							if (style.style_type === 'GRID' && style.meta) obj.layoutGrids = style.meta.style_thumbnail.layoutGrids;
-							return obj;
-						});
+			});
+			return libraries;
+		}
+	},
+	addedLibraries: {
+		get() {
+			const enalbedLibraries = Object.keys(App._state.library.subscriptions.byFile[App.editingFileKey()]).filter(
+				key => {
+					return App._state.library.subscriptions.byFile[App.editingFileKey()][key];
 				}
-			}
+			);
+			const libraries = [];
+			Object.values(App._state.library.published.styles).forEach(team => {
+				for (let file in team) {
+					const fileObj = App._state.fileByKey[file];
+					const styles = Object.values(team[file]).map(style => {
+						return {
+							id: style.key,
+							name: style.name,
+							type: style.style_type,
+							description: style.description,
+							canvas_url: style.canvas_url,
+							file_key: style.file_key
+						};
+					});
+					const obj = { name: fileObj.name, key: file, styles: styles };
+					libraries.push(obj);
+				}
+			});
+			return enalbedLibraries.map(enabledLibrary => libraries.find(library => library.key === enabledLibrary));
+		}
+	}
+});
+
+Object.defineProperty(figmaPlus.comments, 'threads', {
+	get() {
+		const comments = App._state.comments;
+		return Object.values(comments.commentIdsByThread).map(thread => {
+			if (thread.length === 1) return comments.commentsById[thread[0]];
+			const parent = comments.commentsById[thread[thread.length - 1]];
+			parent.replies = thread
+				.slice(0, -1)
+				.reverse()
+				.map(comment => comments.commentsById[comment]);
+			return parent;
 		});
-		return obj;
 	}
 });

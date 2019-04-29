@@ -61,15 +61,12 @@ export default {
     installedPlugins: [],
     devMode: window.pluginDevMode,
     pluginStats: [],
-    users_installed_plugins: [],
-    users_count_limits: [],
+    usersInstalledPlugins: [],
     user: null,
     userHash: ""
   }),
   firestore: {
-    pluginStats: db.collection("plugins_stats"),
-    users_installed_plugins: db.collection("users_installed_plugins"),
-    users_count_limits: db.collection("users_count_limits")
+    pluginStats: db.collection("plugins_stats")
   },
   watch: {
     installedPlugins: array => {
@@ -464,23 +461,20 @@ export default {
             });
         });
       }
-
-      let userData = this.users_installed_plugins.find(
-        user => user.id === this.userHash
-      );
-      if (!userData) {
-        db.collection("users_installed_plugins")
-          .doc(this.user.uid)
-          .set({
-            plugins: [plugin.id]
-          });
-      } else {
-        db.collection("users_installed_plugins")
-          .doc(this.user.uid)
-          .update({
+      const userDoc = db
+        .collection("users_installed_plugins")
+        .doc(this.user.uid);
+      userDoc.get().then(doc => {
+        if (doc.exists) {
+          userDoc.update({
             plugins: firebase.firestore.FieldValue.arrayUnion(plugin.id)
           });
-      }
+        } else {
+          userDoc.set({
+            plugins: [plugin.id]
+          });
+        }
+      });
     },
     uninstall(plugin) {
       this.installedPlugins = this.installedPlugins.filter(
@@ -497,22 +491,21 @@ export default {
         buttonAction: () => location.reload()
       });
 
-      let userData = this.users_installed_plugins.find(
-        user => user.id === this.userHash
-      );
-      if (!userData) {
-        db.collection("users_installed_plugins")
-          .doc(this.user.uid)
-          .set({
-            plugins: []
-          });
-      } else {
-        db.collection("users_installed_plugins")
-          .doc(this.user.uid)
-          .update({
+      const userDoc = db
+        .collection("users_installed_plugins")
+        .doc(this.user.uid);
+
+      userDoc.get().then(doc => {
+        if (doc.exists) {
+          userDoc.update({
             plugins: firebase.firestore.FieldValue.arrayRemove(plugin.id)
           });
-      }
+        } else {
+          userDoc.set({
+            plugins: []
+          });
+        }
+      });
     }
   }
 };

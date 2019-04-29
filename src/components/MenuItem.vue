@@ -1,5 +1,5 @@
 <template lang="pug">
-	.plugin-dropdown-option(@click='runAction' @mouseenter='showSubmenu' @mouseleave='hideSubmenu' ref='menuItem')
+	.plugin-dropdown-option(@click='runAction' @mousemove='showSubmenu' @mouseleave='hideSubmenu' ref='menuItem')
 		.plugin-dropdown-option-text {{ label }}
 		.plugin-dropdown-option-shortcut(v-if='shortcut && !submenuItems') {{ getShortcutText(shortcut) }}
 		.plugin-dropdown-option-chevron(v-if='submenuItems')
@@ -24,15 +24,6 @@ export default {
   ],
   mounted() {
     if (this.submenuItems) this.$refs.submenu.style.display = "none";
-    if (this.isFatMenu) this.$refs.menuItem.style.padding = "0 12px";
-  },
-  computed: {
-    isFatMenu() {
-      return (
-        this.menuType === "FULLSCREEN_FILENAME_DROPDOWN" ||
-        this.menuType === "file-actions-dropdown"
-      );
-    }
   },
   methods: {
     runAction(e) {

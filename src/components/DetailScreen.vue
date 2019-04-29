@@ -37,7 +37,7 @@
 				.show-all-versions-button(v-if='!showAllVersions && plugin.updates.length > 1' @click='showAllVersions = true') See all versions
 			.section(v-if='installs > 0')
 				.section-title Stats
-				.stats {{ installs - uninstalls }} active users
+				.stats {{ activeUsers || 0 }} active users
 				.stats {{ installs }} total installs
 			.section(v-if='plugin.github && plugin.github.includes("github.com/")')
 				a.link(:href='plugin.github' target='_blank')
@@ -83,10 +83,10 @@ export default {
         ? this.pluginStats.find(plugin => plugin.id === this.plugin.id).installs
         : 0;
     },
-    uninstalls() {
+    activeUsers() {
       return this.pluginStats.find(plugin => plugin.id === this.plugin.id)
         ? this.pluginStats.find(plugin => plugin.id === this.plugin.id)
-            .uninstalls
+            .activeUsers
         : 0;
     },
     requiredTeams() {

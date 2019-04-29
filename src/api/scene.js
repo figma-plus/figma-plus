@@ -48,9 +48,11 @@ export const getNode = node => {
 	});
 	if (sceneNode.reversedChildren.length !== 0) {
 		Object.defineProperty(newNode, 'children', {
-			value: sceneNode.reversedChildren.map(child => {
-				return getNode(child);
-			})
+			value: sceneNode.reversedChildren
+				.map(child => {
+					return getNode(child);
+				})
+				.reverse()
 		});
 	}
 	if (!(sceneNode.type === 'DOCUMENT' || sceneNode.type === 'CANVAS')) {
@@ -184,14 +186,11 @@ export const getNode = node => {
 						}
 					}
 				});
-				if (
-					result.inheritFillStyleID &&
-					Object.keys(result.inheritFillStyleID)[0] !== '__mixed__' &&
-					result.inheritFillStyleID.sessionID !== 4294967295
-				) {
+				if (result.inheritFillStyleID && Object.keys(result.inheritFillStyleID)[0] !== '__mixed__') {
 					Object.defineProperty(newNode, 'fillStyleId', {
 						get() {
-							return result.inheritFillStyleKey;
+							if (result.inheritFillStyleID.sessionID === 4294967295) return '';
+							else return result.inheritFillStyleKey;
 						},
 						set(val) {
 							const styles = Object.values(App._state.library.published.styles)
@@ -318,14 +317,11 @@ export const getNode = node => {
 						}
 					});
 				}
-				if (
-					result.inheritEffectStyleID &&
-					Object.keys(result.inheritEffectStyleID)[0] !== '__mixed__' &&
-					result.inheritEffectStyleID.sessionID !== 4294967295
-				) {
+				if (result.inheritEffectStyleID && Object.keys(result.inheritEffectStyleID)[0] !== '__mixed__') {
 					Object.defineProperty(newNode, 'effectStyleId', {
 						get() {
-							return result.inheritEffectStyleKey;
+							if (result.inheritEffectStyleID.sessionID === 4294967295) return '';
+							else return result.inheritEffectStyleKey;
 						},
 						set(val) {
 							const styles = Object.values(App._state.library.published.styles)
@@ -362,14 +358,11 @@ export const getNode = node => {
 						}
 					});
 				}
-				if (
-					result.inheritGridStyleID &&
-					Object.keys(result.inheritGridStyleID)[0] !== '__mixed__' &&
-					result.inheritGridStyleID.sessionID !== 4294967295
-				) {
-					Object.defineProperty(newNode, 'effectStyleId', {
+				if (result.inheritGridStyleID && Object.keys(result.inheritGridStyleID)[0] !== '__mixed__') {
+					Object.defineProperty(newNode, 'gridStyleId', {
 						get() {
-							return result.inheritGridStyleKey;
+							if (result.inheritGridStyleID.sessionID === 4294967295) return '';
+							else return result.inheritGridStyleKey;
 						},
 						set(val) {
 							const styles = Object.values(App._state.library.published.styles)
@@ -704,14 +697,11 @@ export const getNode = node => {
 								}
 							}
 						});
-						if (
-							result.inheritTextStyleID &&
-							Object.keys(result.inheritTextStyleID)[0] !== '__mixed__' &&
-							result.inheritTextStyleID.sessionID !== 4294967295
-						) {
+						if (result.inheritTextStyleID && Object.keys(result.inheritTextStyleID)[0] !== '__mixed__') {
 							Object.defineProperty(newNode, 'textStyleId', {
 								get() {
-									return result.inheritTextStyleKey;
+									if (result.inheritTextStyleID.sessionID === 4294967295) return '';
+									else return result.inheritTextStyleKey;
 								},
 								set(val) {
 									const styles = Object.values(App._state.library.published.styles)
@@ -759,13 +749,14 @@ export const getNode = node => {
 		newNode.booleanOperation = sceneNode.booleanOperation;
 	}
 	if (newNode.children) {
-		newNode.getAllDescendents = () => getAllDescendents(newNode);
+		newNode.findAll = callback => findAll(newNode, callback);
+		newNode.findOne = callback => findOne(newNode, callback);
 	}
 	if (newNode.type !== 'CANVAS')
 		newNode.resize = (width, height) => {
 			updateProperties(newNode.id, { width: width, height: height });
 		};
-	newNode.export = async settings => {
+	newNode.exportAsync = async settings => {
 		const selectedNodes = Object.keys(App._state.mirror.sceneGraphSelection);
 		if (selectedNodes.length !== 1 || (selectedNodes.length === 1 && newNode.id !== selectedNodes[0])) {
 			App.sendMessage('clearSelection');
@@ -791,19 +782,36 @@ export const getNode = node => {
 	return newNode;
 };
 
-const getAllDescendents = node => {
-	let descendents = [];
-	const addToDescendents = node => {
+const findAll = (node, callback) => {
+	let results = [];
+	const addToResults = node => {
 		if (node.children) {
 			for (let i = 0; i < node.children.length; i++) {
 				const thisNode = node.children[i];
-				descendents.push(thisNode);
-				addToDescendents(thisNode);
+				results.push(thisNode);
+				addToResults(thisNode);
 			}
 		}
 	};
-	addToDescendents(node);
-	return descendents;
+	addToResults(node);
+	callback = callback ? callback : () => true;
+	return results.filter(callback);
+};
+
+const findOne = (node, callback) => {
+	let results = [];
+	const addToResults = node => {
+		if (node.children) {
+			for (let i = 0; i < node.children.length; i++) {
+				const thisNode = node.children[i];
+				results.push(thisNode);
+				addToResults(thisNode);
+			}
+		}
+	};
+	addToResults(node);
+	if (callback) return results.find(callback) ? results.find(callback) : null;
+	else return null;
 };
 
 const until = conditionFunction => {
