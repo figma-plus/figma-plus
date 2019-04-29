@@ -1,6 +1,6 @@
 # Figma Plus
 
-![](https://docs.figmaplus.com/images/pluginsList.png)
+<img src="https://docs.figmaplus.com/images/pluginsList.png" width="450">
 
 Figma Plus is an unofficial plugin platform for Figma.
 This is an open-source project that is **not** affiliated with the official Figma team.
