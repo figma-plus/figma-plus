@@ -1,6 +1,8 @@
 <h1 align="center">Figma Plus</h1>
 
-<img align="center" src="https://docs.figmaplus.com/images/pluginsList.png" width="450">
+<p align="center">
+	<img src="https://docs.figmaplus.com/images/pluginsList.png" width="450">
+</p>
 
 Figma Plus is an unofficial plugin platform for Figma.
 This is an open-source project that is **not** affiliated with the official Figma team.
