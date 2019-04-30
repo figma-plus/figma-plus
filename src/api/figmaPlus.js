@@ -29,7 +29,8 @@ export const figmaPlus = {
 						type: style.style_type,
 						description: style.description,
 						canvas_url: style.canvas_url,
-						file_key: style.file_key
+						file_key: style.file_key,
+						content_hash: style.content_hash
 					};
 					if (style.thumbnail_url) obj.thumbnail_url = style.thumbnail_url;
 					if (style.style_type === 'FILL' && style.meta) obj.fills = style.meta.style_thumbnail.fillPaints;
@@ -55,7 +56,8 @@ export const figmaPlus = {
 						type: style.style_type,
 						description: style.description,
 						canvas_url: style.canvas_url,
-						file_key: style.file_key
+						file_key: style.file_key,
+						content_hash: style.content_hash
 					};
 					if (style.thumbnail_url) obj.thumbnail_url = style.thumbnail_url;
 					if (style.style_type === 'FILL' && style.meta) obj.fills = style.meta.style_thumbnail.fillPaints;
@@ -388,7 +390,13 @@ Object.defineProperties(figmaPlus.styles, {
 	local: {
 		get() {
 			return Object.values(App._state.library.local.styles).map(style => {
-				const obj = { id: style.key, name: style.name, type: style.style_type, description: style.description };
+				const obj = {
+					id: style.key,
+					name: style.name,
+					type: style.style_type,
+					description: style.description,
+					content_hash: style.content_hash
+				};
 				if (style.thumbnail_url) obj.thumbnail_url = style.thumbnail_url;
 				if (style.style_type === 'FILL' && style.meta) obj.fills = style.meta.style_thumbnail.fillPaints;
 				if (style.style_type === 'EFFECT' && style.meta) obj.effects = style.meta.style_thumbnail.effects;
@@ -411,7 +419,8 @@ Object.defineProperties(figmaPlus.styles, {
 							type: style.style_type,
 							description: style.description,
 							canvas_url: style.canvas_url,
-							file_key: style.file_key
+							file_key: style.file_key,
+							content_hash: style.content_hash
 						};
 					});
 					const obj = { name: fileObj.name, key: file, styles: styles };
@@ -439,7 +448,8 @@ Object.defineProperties(figmaPlus.styles, {
 							type: style.style_type,
 							description: style.description,
 							canvas_url: style.canvas_url,
-							file_key: style.file_key
+							file_key: style.file_key,
+							content_hash: style.content_hash
 						};
 					});
 					const obj = { name: fileObj.name, key: file, styles: styles };
