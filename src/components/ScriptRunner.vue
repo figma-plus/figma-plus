@@ -14,7 +14,7 @@ import PrismEditor from "vue-prism-editor";
 export default {
   data: () => ({
     code: "figmaPlus.showToast({message: 'Hello world!'})",
-    isDesktop: __figmaDesktop
+    isDesktop: figmaPlus.isDesktop
   }),
   components: {
     PrismEditor
