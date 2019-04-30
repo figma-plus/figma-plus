@@ -49,7 +49,6 @@ export default {
     PluginsMenu
   },
   data: () => ({
-    isLocalChromeExtension: window.localExtension,
     myOrgId: null,
     myTeams: null,
     modalOpened: false,
@@ -85,6 +84,12 @@ export default {
         this.injectpluginManagerButton();
     });
 
+    if (
+      document.querySelector('[data-tooltip-text="Show notifications"]') &&
+      !document.getElementById("pluginManagerButton")
+    )
+      this.injectpluginManagerButton();
+
     figmaPlus.onFileBrowserUnloaded(this.hide);
 
     figmaPlus.registerKeyboardShortcut({
@@ -108,12 +113,6 @@ export default {
             width: 500
           })
       });
-
-    if (
-      document.querySelector('[data-tooltip-text="Show notifications"]') &&
-      !document.getElementById("pluginManagerButton")
-    )
-      this.injectpluginManagerButton();
 
     window.figmaPlus.togglePluginManager = this.toggleModal;
 
@@ -141,43 +140,24 @@ export default {
     const oldMasterList = JSON.parse(
       localStorage.getItem("figmaPlus-masterList")
     );
-
-    if (this.isLocalChromeExtension) {
-      const masterList = require("../../test-plugins.json");
-      if (
-        localStorage.getItem("figmaPlus-plugins") &&
-        oldMasterList &&
-        JSON.stringify(oldMasterList) === JSON.stringify(masterList)
-      ) {
-        this.plugins = JSON.parse(localStorage.getItem("figmaPlus-plugins"));
-        this.checkForUpdates();
-      } else {
-        if (oldMasterList && masterList.length > oldMasterList.length)
-          localStorage.setItem("figmaPlus-hasNewPlugins", "true");
-        this.loadPlugins(masterList);
-      }
-    } else {
-      fetch("https://figma-plus.github.io/plugin-directory/plugins.json", {
-        cache: "no-cache"
-      })
-        .then(response => response.json())
-        .then(masterList => {
-          if (
-            localStorage.getItem("figmaPlus-plugins") &&
-            oldMasterList &&
-            JSON.stringify(oldMasterList) === JSON.stringify(masterList)
-          ) {
-            this.plugins = JSON.parse(
-              localStorage.getItem("figmaPlus-plugins")
-            );
-            this.checkForUpdates();
-          } else {
-            if (oldMasterList && masterList.length > oldMasterList.length)
-              localStorage.setItem("figmaPlus-hasNewPlugins", "true");
-            this.loadPlugins(masterList);
-          }
-        });
-    }
+    fetch("https://figma-plus.github.io/plugin-directory/plugins.json", {
+      cache: "no-cache"
+    })
+      .then(response => response.json())
+      .then(masterList => {
+        if (
+          localStorage.getItem("figmaPlus-plugins") &&
+          oldMasterList &&
+          JSON.stringify(oldMasterList) === JSON.stringify(masterList)
+        ) {
+          this.plugins = JSON.parse(localStorage.getItem("figmaPlus-plugins"));
+          this.checkForUpdates();
+        } else {
+          if (oldMasterList && masterList.length > oldMasterList.length)
+            localStorage.setItem("figmaPlus-hasNewPlugins", "true");
+          this.loadPlugins(masterList);
+        }
+      });
   },
   computed: {
     searchedPlugins() {

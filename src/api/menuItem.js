@@ -6,6 +6,9 @@ export const addMenuItem = (menuType, label, action, condition, shortcut, submen
 		if (type === 'DROPDOWN_TYPE_SELECTION_CONTEXT_MENU' || type === 'DROPDOWN_TYPE_OBJECTS_PANEL_CONTEXT_MENU') {
 			if (!document.getElementById('selectionPluginsMenuItem')) {
 				const selectionPluginsMenuItem = document.createElement('div');
+				const development = [...document.querySelectorAll('div[class*="multilevel_dropdown--option"]')].find(
+					node => node.firstChild.innerText === 'Development'
+				);
 				const extensions = [...document.querySelectorAll('div[class*="multilevel_dropdown--option"]')].find(
 					node => node.firstChild.innerText === 'Extensions'
 				);
@@ -13,7 +16,9 @@ export const addMenuItem = (menuType, label, action, condition, shortcut, submen
 					node => node.firstChild.innerText === 'Show/Hide'
 				);
 				const menu = show.parentNode;
-				if (extensions) {
+				if (development) {
+					menu.insertBefore(selectionPluginsMenuItem, development.nextSibling);
+				} else if (extensions) {
 					menu.insertBefore(selectionPluginsMenuItem, extensions.nextSibling);
 				} else {
 					const separator = document.createElement('div');
