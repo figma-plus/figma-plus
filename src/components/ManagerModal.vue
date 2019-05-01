@@ -521,12 +521,14 @@ export default {
 .modal-tab-large {
   font: normal normal 400 14px/24px Inter, Roboto, sans-serif;
   padding: 0 12px;
-  color: #fff;
+  color: rgba(0, 0, 0, 0.3);
   align-items: center;
-  opacity: 0.5;
   display: flex;
   &.active-tab {
-    opacity: 1;
+    color: #000;
+  }
+  &:hover {
+    color: rgba(0, 0, 0, 0.8);
   }
 }
 

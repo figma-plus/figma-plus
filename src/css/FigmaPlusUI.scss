@@ -353,34 +353,12 @@ body {
 		}
 	}
 	&.header-large {
-		background: #2c2c2c;
-		color: #fff;
 		height: 48px;
 		line-height: 48px;
 		padding-left: 12px;
 		.modal-close-button {
 			height: 48px;
 			width: 48px;
-		}
-		.modal-close-button {
-			font-family: 'FigmaIcons';
-			color: #fff;
-			opacity: 0.3;
-			height: 32px;
-			width: 32px;
-			padding-right: 8px;
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			&::after {
-				content: '\103';
-				font-size: 16px;
-				height: 12px;
-				line-height: 16px;
-			}
-			&:hover {
-				opacity: 1;
-			}
 		}
 		.modal-tabs {
 			padding: 0px;
