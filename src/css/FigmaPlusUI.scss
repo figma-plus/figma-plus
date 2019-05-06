@@ -3,8 +3,6 @@
 
 * {
 	-webkit-font-smoothing: antialiased;
-	user-select: none;
-	cursor: default;
 }
 
 body {
@@ -15,6 +13,8 @@ body {
 
 .modal-content,
 .tab-content {
+	user-select: none;
+	cursor: default;
 	position: relative;
 	box-sizing: border-box;
 	padding: 16px 8px;
