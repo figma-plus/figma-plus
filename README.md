@@ -13,3 +13,5 @@ Documentations for Figma Plus can be found on [docs.figmaplus.com](http://docs.f
 This repo contains the main code that gets injected by the [desktop installer](https://github.com/figma-plus/installer) and the [Chrome extension](https://github.com/figma-plus/chrome-extension).
 
 Figma Plus is a community-driven project. We welcome contribution to our code from anyone who is interested in improving the Figma Plus platform.
+
+For any questions, feedback or ideas, please post on our [Spectrum community](https://spectrum.chat/figma-plus).
