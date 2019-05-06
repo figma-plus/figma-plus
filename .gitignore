@@ -6,7 +6,7 @@ screenshot
 dev-dist/
 firebaseConfig.js
 package-lock.json
-yarn.locl
+yarn.lock
 
 # local env files
 .env.local

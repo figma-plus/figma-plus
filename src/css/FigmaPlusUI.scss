@@ -78,7 +78,7 @@ body {
 		&:disabled {
 			color: #fff;
 			background-color: rgba(0, 0, 0, 0.3);
-			border: none;
+			border: 1px solid transparent;
 		}
 		&.primary {
 			color: #fff;
