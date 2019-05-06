@@ -14,7 +14,7 @@
 var compareVersions = require("compare-versions");
 
 export default {
-  props: ["plugin", "installedPlugins", "installedScreenOn"],
+  props: ["plugin", "installedPlugins", "updatedPlugins", "installedScreenOn"],
   methods: {
     goToDetail(event) {
       this.$emit("goToDetail", this.plugin);
@@ -32,12 +32,9 @@ export default {
       );
     },
     hasUpdate() {
-      const thisPlugin = this.installedPlugins.find(
-        installedPlugin => installedPlugin.id === this.plugin.id
+      return this.updatedPlugins.find(
+        updatedPlugin => updatedPlugin.id === this.plugin.id
       );
-      return thisPlugin !== undefined
-        ? compareVersions(this.plugin.version, thisPlugin.version)
-        : false;
     }
   }
 };

@@ -209,15 +209,18 @@ body {
 	align-items: center;
 	justify-content: center;
 	position: relative;
+	&.has-badge svg {
+		padding-top: 3px;
+	}
 	&.has-badge::after {
 		content: '';
-		width: 12px;
-		height: 12px;
+		width: 13px;
+		height: 13px;
 		border-radius: 10px;
 		background: #f24822;
 		position: absolute;
-		top: 8px;
-		right: 6px;
+		top: 10px;
+		right: 3px;
 	}
 	&.active,
 	&.active:hover {

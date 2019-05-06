@@ -145,7 +145,6 @@ export default {
     addPath(type) {
       if (!this.connected) {
         const files = type === "js" ? this.jsFiles : this.cssFiles;
-        console.log(files);
         files.push("");
         setTimeout(() => {
           this.editing = type + (files.length - 1);
