@@ -121,7 +121,15 @@ export default {
         document.head.appendChild(styles);
       });
       this.jsFiles.forEach(js => {
-        fetch("http://localhost:" + this.port + "/" + js, { cache: "no-cache" })
+        fetch(
+          "http://localhost:" +
+            this.port +
+            "/" +
+            js +
+            "?_=" +
+            new Date().getTime(),
+          { cache: "no-cache" }
+        )
           .then(response => response.text())
           .then(code => {
             const script = document.createElement("script");
