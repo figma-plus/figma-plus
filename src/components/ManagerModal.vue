@@ -13,7 +13,7 @@
 					.search-box
 						.figma-icon.search
 						input.no-border(v-model='searchText' placeholder='Search' spellcheck='false')
-					.plugins-list(v-if='isDesktop && (plugins !== null || plugins.length !== 0)')
+					.plugins-list(v-if='plugins !== null || plugins.length !== 0')
 						pluginItem(type='text' v-for='plugin in searchedPlugins' :key='plugin.id' :plugin='plugin' :installedPlugins='installedPlugins' :updatedPlugins='updatedPlugins' :installedScreenOn='currentTab === "Installed"' @goToDetail='goToDetail' @install='install')
 						.no-search-results-message(v-if='searchedPlugins.length === 0 && searchText !== ""') No results for '{{ searchText }}'
 				detailScreen(:class='{detailScreenOn: detailScreenOn}' :plugin='selectedPlugin' :pluginStats='pluginStats' :installed='installedPlugins.find(installedPlugin => installedPlugin.id === selectedPlugin.id) !== undefined' @backToList='detailScreenOn = false' @install='install' @uninstall='uninstall' @hide='hide')
