@@ -17,55 +17,55 @@ export const figmaPlus = {
 	},
 	styles: {
 		findAll: callback => {
-			const publishedStyles = Object.values(App._state.library.published.styles)
-				.map(org => Object.values(org))
-				.flat()
-				.map(team => Object.values(team))
-				.flat()
-				.map(style => {
-					const obj = {
-						id: style.key,
-						name: style.name,
-						type: style.style_type,
-						description: style.description,
-						canvas_url: style.canvas_url,
-						file_key: style.file_key,
-						content_hash: style.content_hash
-					};
-					if (style.thumbnail_url) obj.thumbnail_url = style.thumbnail_url;
-					if (style.style_type === 'FILL' && style.meta) obj.fills = style.meta.style_thumbnail.fillPaints;
-					if (style.style_type === 'EFFECT' && style.meta) obj.effects = style.meta.style_thumbnail.effects;
-					if (style.style_type === 'GRID' && style.meta) obj.layoutGrids = style.meta.style_thumbnail.layoutGrids;
-					obj.remote = true;
-					return obj;
-				});
+			const flattenedFiles = [].concat.apply(
+				[],
+				Object.values(App._state.library.published.styles).map(org => Object.values(org))
+			);
+			const flattenedStyles = [].concat.apply([], flattenedFiles.map(team => Object.values(team)));
+			const publishedStyles = flattenedStyles.map(style => {
+				const obj = {
+					id: style.key,
+					name: style.name,
+					type: style.style_type,
+					description: style.description,
+					canvas_url: style.canvas_url,
+					file_key: style.file_key,
+					content_hash: style.content_hash
+				};
+				if (style.thumbnail_url) obj.thumbnail_url = style.thumbnail_url;
+				if (style.style_type === 'FILL' && style.meta) obj.fills = style.meta.style_thumbnail.fillPaints;
+				if (style.style_type === 'EFFECT' && style.meta) obj.effects = style.meta.style_thumbnail.effects;
+				if (style.style_type === 'GRID' && style.meta) obj.layoutGrids = style.meta.style_thumbnail.layoutGrids;
+				obj.remote = true;
+				return obj;
+			});
 			const allStyles = figmaPlus.styles.local.concat(publishedStyles);
 			callback = callback ? callback : () => true;
 			return allStyles.filter(callback);
 		},
 		findOne: callback => {
-			const publishedStyles = Object.values(App._state.library.published.styles)
-				.map(org => Object.values(org))
-				.flat()
-				.map(team => Object.values(team))
-				.flat()
-				.map(style => {
-					const obj = {
-						id: style.key,
-						name: style.name,
-						type: style.style_type,
-						description: style.description,
-						canvas_url: style.canvas_url,
-						file_key: style.file_key,
-						content_hash: style.content_hash
-					};
-					if (style.thumbnail_url) obj.thumbnail_url = style.thumbnail_url;
-					if (style.style_type === 'FILL' && style.meta) obj.fills = style.meta.style_thumbnail.fillPaints;
-					if (style.style_type === 'EFFECT' && style.meta) obj.effects = style.meta.style_thumbnail.effects;
-					if (style.style_type === 'GRID' && style.meta) obj.layoutGrids = style.meta.style_thumbnail.layoutGrids;
-					obj.remote = true;
-					return obj;
-				});
+			const flattenedFiles = [].concat.apply(
+				[],
+				Object.values(App._state.library.published.styles).map(org => Object.values(org))
+			);
+			const flattenedStyles = [].concat.apply([], flattenedFiles.map(team => Object.values(team)));
+			const publishedStyles = flattenedStyles.map(style => {
+				const obj = {
+					id: style.key,
+					name: style.name,
+					type: style.style_type,
+					description: style.description,
+					canvas_url: style.canvas_url,
+					file_key: style.file_key,
+					content_hash: style.content_hash
+				};
+				if (style.thumbnail_url) obj.thumbnail_url = style.thumbnail_url;
+				if (style.style_type === 'FILL' && style.meta) obj.fills = style.meta.style_thumbnail.fillPaints;
+				if (style.style_type === 'EFFECT' && style.meta) obj.effects = style.meta.style_thumbnail.effects;
+				if (style.style_type === 'GRID' && style.meta) obj.layoutGrids = style.meta.style_thumbnail.layoutGrids;
+				obj.remote = true;
+				return obj;
+			});
 			const allStyles = figmaPlus.styles.local.concat(publishedStyles);
 			if (callback) return allStyles.find(callback) ? allStyles.find(callback) : null;
 			else return null;

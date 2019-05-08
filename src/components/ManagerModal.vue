@@ -13,7 +13,7 @@
 					.search-box
 						.figma-icon.search
 						input.no-border(v-model='searchText' placeholder='Search' spellcheck='false')
-					.plugins-list
+					.plugins-list(v-if='isDesktop && plugins.length !== 0')
 						pluginItem(type='text' v-for='plugin in searchedPlugins' :key='plugin.id' :plugin='plugin' :installedPlugins='installedPlugins' :updatedPlugins='updatedPlugins' :installedScreenOn='currentTab === "Installed"' @goToDetail='goToDetail' @install='install')
 						.no-search-results-message(v-if='searchedPlugins.length === 0 && searchText !== ""') No results for '{{ searchText }}'
 				detailScreen(:class='{detailScreenOn: detailScreenOn}' :plugin='selectedPlugin' :pluginStats='pluginStats' :installed='installedPlugins.find(installedPlugin => installedPlugin.id === selectedPlugin.id) !== undefined' @backToList='detailScreenOn = false' @install='install' @uninstall='uninstall' @hide='hide')
@@ -21,6 +21,12 @@
 				.empty-state(v-if='currentTab === "Installed" && installedPlugins.length === 0')
 					.empty-state-title No plugins installed
 					.empty-state-hint Select the Plugins tab to browse and install plugins.
+				.empty-state(v-if='!isDesktop && plugins.length === 0')
+					.empty-state-title Failed to load plugin list
+					.empty-state-hint Please disable Adblock on all Figma pages and try again.
+				.empty-state(v-if='isDesktop && plugins.length === 0')
+					.empty-state-title Failed to load plugin list
+					.empty-state-hint This is likely a network issue. Please send us a screenshot of the <a style='display: inline' @click='showConsole'>console</a>.
 </template>
 
 <script>
@@ -61,6 +67,7 @@ export default {
     updatedPlugins: [],
     newPlugins: [],
     devMode: window.pluginDevMode,
+    isDesktop: figmaPlus.isDesktop,
     pluginStats: [],
     usersInstalledPlugins: [],
     user: null,
@@ -397,6 +404,9 @@ export default {
           });
         }
       });
+    },
+    showConsole() {
+      __figmaDesktop.postMessage("openDevTools", { mode: "bottom" });
     }
   }
 };
