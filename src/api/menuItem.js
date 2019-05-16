@@ -3,6 +3,7 @@ import selectionPluginsMenu from '../components/SelectionPluginsMenu.vue';
 
 export const addMenuItem = (menuType, label, action, condition, shortcut, submenuItems) => {
 	figmaPlus.onMenuOpened((type, hasMoreOptions) => {
+		window.App.sendMessage = window.App.DEPRECATED_sendMessage;
 		if (type === 'DROPDOWN_TYPE_SELECTION_CONTEXT_MENU' || type === 'DROPDOWN_TYPE_OBJECTS_PANEL_CONTEXT_MENU') {
 			if (!document.getElementById('selectionPluginsMenuItem')) {
 				const selectionPluginsMenuItem = document.createElement('div');
