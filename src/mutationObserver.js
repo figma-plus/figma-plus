@@ -12,6 +12,7 @@ export function startMutationObserver() {
 
 		if (window.App._state !== undefined && !appLoaded) {
 			appLoaded = true;
+			window.App.sendMessage = window.App.DEPRECATED_sendMessage;
 			window.dispatchEvent(new CustomEvent('appLoaded'));
 		}
 
