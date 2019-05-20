@@ -3,6 +3,7 @@ import { figmaPlus } from './api/figmaPlus';
 import Vue from 'vue';
 import ManagerModal from './components/ManagerModal.vue';
 import OnboardingModal from './components/OnboardingModal.vue';
+import GoodbyeModal from './components/GoodbyeModal.vue';
 import { firestorePlugin } from 'vuefire';
 
 Vue.use(firestorePlugin);
@@ -176,6 +177,19 @@ if (!localStorage.getItem('figmaPlus-onboarded')) {
 			vueComponent: OnboardingModal,
 			width: 400,
 			height: 425,
+			overlay: true,
+			padding: false
+		});
+	});
+}
+
+if (!localStorage.getItem('figmaPlus-goodbye')) {
+	figmaPlus.onFileBrowserLoaded(() => {
+		figmaPlus.showUI({
+			title: 'Good bye',
+			vueComponent: GoodbyeModal,
+			width: 600,
+			height: 'auto',
 			overlay: true,
 			padding: false
 		});
